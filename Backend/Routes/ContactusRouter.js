@@ -1,3 +1,5 @@
+// just_home/Backend/Routes/ContactusRouter.js
+// Routes/ContactusRouter.js
 
 import express from 'express'
 import { getAllContactus, postContactus } from '../Controller/ContactusController.js';

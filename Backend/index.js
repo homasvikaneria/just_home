@@ -1,3 +1,6 @@
+// just_home/Backend/index.js
+// Backend/index.js
+// index.js
 
 
 
@@ -6,7 +9,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import ContactusRouter from './Routes/ContactusRouter.js';
-// import UsersRouter from './Routes/UsersRouter.js';
+import UsersRouter from './Routes/UsersRouter.js';
+import StayuptothedateRouter from './Routes/StayuptothedateRouter.js';
 
 // Load environment variables
 dotenv.config();
@@ -26,12 +30,24 @@ app.use(express.json());
 
 // Routes
 app.use("/contactus", ContactusRouter);
-// app.use("/users", UsersRouter);
+app.use("/users", UsersRouter);
+app.use ("/stayuptothedate" , StayuptothedateRouter)
 
 // MongoDB Atlas Connection
-mongoose.connect(MONGO_URI)
-    .then(() => console.log("✅ Connected to MongoDB Atlas (Database: just_home)"))
-    .catch(err => console.error("❌ MongoDB Atlas connection error:", err));
+// mongoose.connect(MONGO_URI)
+//     .then(() => console.log("✅ Connected to MongoDB Atlas (Database: just_home)"))
+//     .catch(err => console.error("❌ MongoDB Atlas connection error:", err));
+
+mongoose.connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log("✅ Connected to MongoDB Atlas (Database: just_home)"))
+.catch(err => {
+    console.error("❌ MongoDB Atlas connection error:", err);
+    process.exit(1); // Stop the server on failure
+});
+
 
 // Start the server
 app.listen(PORT, () => {
@@ -39,15 +55,3 @@ app.listen(PORT, () => {
 });
 
 
-// import express from 'express';
-
-// const app = express();
-// const PORT = process.env.PORT || 3000;
-
-// app.get("/", (req, res) => {
-//     res.send("Server is running...");
-// });
-
-// app.listen(PORT, () => {
-//     console.log(`🚀 Server running on http://localhost:${PORT}`);
-// });
