@@ -11,6 +11,7 @@ import cors from 'cors';
 import ContactusRouter from './Routes/ContactusRouter.js';
 import UsersRouter from './Routes/UsersRouter.js';
 import StayuptothedateRouter from './Routes/StayuptothedateRouter.js';
+import PropertiesRouter from './Routes/PropertiesRouter.js';
 
 // Load environment variables
 dotenv.config();
@@ -32,6 +33,7 @@ app.use(express.json());
 app.use("/contactus", ContactusRouter);
 app.use("/users", UsersRouter);
 app.use ("/stayuptothedate" , StayuptothedateRouter)
+app.use("/properties",PropertiesRouter)
 
 // MongoDB Atlas Connection
 // mongoose.connect(MONGO_URI)
