@@ -1,0 +1,66 @@
+.user-button {
+    background: none;       /* Transparent background */
+    border: none;           /* No border */
+    cursor: pointer;        /* Pointer cursor on hover */
+    padding: 5px;           /* Add slight padding */
+    transition: transform 0.2s ease; /* Smooth scaling on hover */
+}
+
+.user-button img {
+    width: 35px;            /* Adjust icon size */
+    height: 35px;
+    border-radius: 50%;     /* Make it circular */
+}
+
+/* Hover effect */
+.user-button:hover {
+    transform: scale(1.1);  /* Slight zoom-in on hover */
+}
+/* Navbar.css */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0D2223;
+    padding: 1rem 2rem;
+    color: white;
+  }
+  /* .logoimg{
+    height: 20px;
+  } */
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-left: -290px;
+    cursor: pointer;
+  }
+  
+  .nav-links a,
+  .auth-links a {
+    margin: 0 1rem;
+    text-decoration: none;
+    color: white;
+    transition: color 0.3s ease;
+    font-size: large;
+  }
+  
+  .nav-links a:hover,
+  .auth-links a:hover {
+    color: #f4c542;
+  }
+  
+  .auth-links .signup-btn {
+    background-color: #f4c542;
+    color: black;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .auth-links .signup-btn:hover {
+    background-color: #d9a91b;
+  }
+  
+
+  

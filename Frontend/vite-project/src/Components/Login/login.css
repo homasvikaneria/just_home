@@ -1,0 +1,73 @@
+/* Background and layout */
+.loginbox {
+    background-image: url('../../assets/Login_Page.png');  /* ✅ Make sure the path is correct */
+    background-size: cover;            /* Full screen coverage */
+    background-position: top center;   /* Align logo to top center */
+    background-repeat: no-repeat;      /* No repeating */
+    width: 100vw;                      /* Full viewport width */
+    height: 100vh;                     /* Full viewport height */
+    display: flex;                     /* Flexbox for centering content */
+    justify-content: center;
+    align-items: center;
+    padding: 20px;                     /* Padding around the content */
+    box-sizing: border-box;            /* Ensures padding doesn't overflow */
+}
+
+/* Login form container */
+.login-form-container {
+    background: rgba(255, 255, 255, 0.85);  /* Slight transparency to show background */
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    max-width: 400px;                      /* Prevents form from stretching too wide */
+    width: 100%;                           /* Responsive width */
+}
+
+/* Form input fields */
+.login-form-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.login-form-container input:focus {
+    border-color: #007bff; /* Highlight on focus */
+}
+
+/* Login button */
+.login-form-container button {
+    width: 100%;
+    padding: 12px;
+    background: blue;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.login-form-container button:hover {
+    background: darkblue; /* Button hover effect */
+}
+
+/* Sign-up link */
+.login-form-container p {
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 480px) {
+    .loginbox {
+        padding: 10px;
+        background-position: center top; /* Adjust logo position on small screens */
+    }
+
+    .login-form-container {
+        padding: 15px;
+    }
+}

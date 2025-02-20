@@ -1,0 +1,194 @@
+/* LandingPageStyles.css */
+
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .image{
+    margin-top: -2px;
+  }
+  header {
+    background-color: #1B4F5C;
+    color: white;
+    text-align: center;
+    padding: 4rem 1rem;
+  }
+  
+  header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+  
+  header p {
+    margin: 1rem 0;
+  }
+  
+  header button {
+    background-color: #f4c542;
+    color: black;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  header button:hover {
+    background-color: #d9a91b;
+  }
+  
+  /* Stats Section */
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f4c542;
+    padding: 2rem 0;
+    color: black;
+  }
+  
+  .stats div {
+    text-align: center;
+  }
+  
+  .stats h2 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  /* Why Work With Us Section */
+  .why-work {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  .why-work p{
+    margin-top:-15px
+  }
+  
+  .why-work h2 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .why-work .features {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 2rem;
+  }
+  
+  .features div {
+    max-width: 200px;
+  }
+  .bgc{
+    margin-bottom: -260px;
+  }
+  
+  /* Discover Section */
+  .discover {
+    /* background: url('https://via.placeholder.com/1500') no-repeat center/cover; */
+    color: white;
+    text-align: center;
+    padding: 4rem 1rem;
+    position: relative;
+    font-size: larger;
+  }
+  
+  .discover button {
+    background-color: #f4c542;
+    color: black;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    /* margin-bottom: -200px; */
+
+
+  }
+  .button{
+    font-size: 20px;
+  }
+  .discover h2{
+    font-size: 40px;
+    /* margin: 50px ,0px,0px,0px; */
+  }
+
+  .discover p{
+    font-size: 20px;
+  }
+  .discover button:hover {
+    background-color: #d9a91b;
+  }
+  
+  /* Testimonials Section */
+  .testimonials {
+    text-align: center;
+    padding: 3rem 1rem;
+    margin-top: 250px;
+  }
+  
+  .testimonials .cards {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 2rem;
+  }
+  
+  .cards div {
+    background-color: #f0f0f0;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 250px;
+  }
+  .mainbox{
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Newsletter Section */
+  .newsletter {
+    background-color: #e0e0e0;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  
+  .newsletter input[type='email'] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .newsletter button {
+    background-color: #f4c542;
+    color: black;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .newsletter button:hover {
+    background-color: #d9a91b;
+  }
+  
+  /* Footer */
+  footer {
+    background-color: #1B4F5C;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  footer a {
+    color: white;
+    margin: 0 0.5rem;
+    text-decoration: none;
+  }
+  
+  footer a:hover {
+    text-decoration: underline;
+  }
+  
