@@ -3,13 +3,15 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Mainnavbar from "./Components/Mainnav/Mainnavbar";
+import LandingPage from "../src/Components/LandingPage/LandingPage.jsx";
+
 
 const App = () => {
   return (
     <Router>
-      <Mainnavbar />
+      {/* <Mainnavbar /> */}
       <Routes>
-        {/* Add your routes here */}
+      <Route path="/" element={<LandingPage />} />
       </Routes>
     </Router>
   );
