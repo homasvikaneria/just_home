@@ -1,6 +1,6 @@
 // just_home/Frontend/vite-project/src/Components/HomePage/HomePage.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "axios"
 
 
 
