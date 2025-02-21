@@ -1,3 +1,4 @@
+// just_home/Frontend/Components/Signup/Signup.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -46,7 +47,8 @@ const SignUpPage = () => {
                     <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                     <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
 
-                    <button type="submit" className="submitbtn">Sign Up</button>
+                    <button type="submit" className="submitbtn">Sign Up <Link to="/login"></Link> </button>
+                    
                 </form>
                 <p style={{ textAlign: 'center', marginTop: '10px' }}>
                     Already have an account? <Link to="/login" className="text-blue-600">Log In</Link>
