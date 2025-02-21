@@ -1,0 +1,86 @@
+/* just_home/Frontend/vite-project/src/Components/Mainnav/Mainnavbar.css */
+/* Navbar Container */
+
+*{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0D2223;
+    padding: 10px 20px;
+    color: white;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+/* Left: Logo & Brand Name */
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 30px; /* Adjust logo size */
+    margin-right: 10px;
+}
+
+.brand-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Center: Navigation Links */
+.nav-links {
+    display: flex;
+    gap: 25px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #f4c542;
+}
+
+/* Right: User Icon */
+.user {
+    display: flex;
+    align-items: center;
+}
+
+.user-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.user-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 20px;
+
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        text-align: center;
+    }
+}
