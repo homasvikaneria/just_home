@@ -1,20 +1,31 @@
-// // practice/Backend/Routes/PropertiesRouter.js
-// // Routes/PropertiesRouter.js
-// import express from 'express'
-// import { getAllProperties, getPropertiesByCity, getPropertiesByState,getPropertiesByCategory,getPropertiesByRating, getPropertiesByLandmark,getPetFriendlyProperties,getPropertiesByBedrooms,getPropertiesByStatus,getPropertiesByPrice,addProperty } from '../Controller/PropertiesController.js'
+// just_home/Backend/Routes/PropertiesRouter.js
+import express from 'express';
+import {
+    getAllProperties,
+    getPropertiesByCity,
+    getPropertiesByState,
+    getPropertiesByCategory,
+    getPropertiesByRating,
+    getPropertiesByLandmark,
+    getPetFriendlyProperties,
+    getPropertiesByBedrooms,
+    getPropertiesByStatus,
+    getPropertiesByPrice,
+    addProperty
+} from '../Controller/PropertiesController.js';
 
-// const PropertiesRouter = express.Router()
+const router = express.Router();
 
-// PropertiesRouter.get('/', getAllProperties);
-// PropertiesRouter.get('/city/:cityName', getPropertiesByCity);
-// PropertiesRouter.get('/state/:stateName', getPropertiesByState);
-// PropertiesRouter.get('/category/:categoryName', getPropertiesByCategory);
-// PropertiesRouter.get('/rating', getPropertiesByRating);
-// PropertiesRouter.get('/landmarks/:landmark', getPropertiesByLandmark);
-// PropertiesRouter.get('/petFriendly/:petFriendly', getPetFriendlyProperties);
-// PropertiesRouter.get('/bedrooms/:number', getPropertiesByBedrooms);
-// PropertiesRouter.get('/status/:status', getPropertiesByStatus);
-// PropertiesRouter.get('/price', getPropertiesByPrice);
-// PropertiesRouter.post('/', addProperty);
+router.get('/', getAllProperties);
+router.get('/city/:cityName', getPropertiesByCity);
+router.get('/state/:stateName', getPropertiesByState);
+router.get('/category/:categoryName', getPropertiesByCategory);
+router.get('/rating', getPropertiesByRating);
+router.get('/landmark/:landmark', getPropertiesByLandmark);
+router.get('/pet-friendly/:petFriendly', getPetFriendlyProperties);
+router.get('/bedrooms/:number', getPropertiesByBedrooms);
+router.get('/status/:status', getPropertiesByStatus);
+router.get('/price', getPropertiesByPrice);
+router.post('/', addProperty);
 
-// export default PropertiesRouter
+export default router;
