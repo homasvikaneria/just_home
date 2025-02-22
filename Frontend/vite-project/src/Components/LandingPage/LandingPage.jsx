@@ -1,13 +1,16 @@
 // just_home/Frontend/vite-project/src/Components/LandingPage/LandingPage.jsx
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link  , useNavigate } from "react-router-dom";
 import Mainnavbar from "../Mainnav/Mainnavbar"
 import './LandingPage.css'
 import Newsletter from "../Newsletter/Newsletter";
 
 
 
+
 const LandingPage = () => {
+    const navigate = useNavigate();
+
     return (
         <div>
             <Mainnavbar />
@@ -75,6 +78,7 @@ const LandingPage = () => {
                 <button className="signup-button" onClick={() => navigate("/homepage")}>
                     Get Started →
                 </button>
+
             </div>
 
 
@@ -148,7 +152,7 @@ const LandingPage = () => {
 
 
 
-<Newsletter/>
+            <Newsletter />
 
         </div>
     );
