@@ -9,6 +9,19 @@ import Mainnavbar from "../Mainnav/Mainnavbar";
 const HomePage = () => {
   const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/search-results?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  // Handle category selection
+  const handleCategoryClick = (category) => {
+    navigate(`/category/${category}`);
+  };
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -69,13 +82,11 @@ const HomePage = () => {
         </section>
       </div>
 
-      {/* Section: Search and Property Categories */}
-      <div className="homepage-container">
+      {/* <div className="homepage-container">
         <div className="search-section">
           <h1 className="search-title">Believe in finding it</h1>
           <p className="search-subtitle">Search properties for sale and to rent</p>
 
-          {/* Search Bar */}
           <div className="search-bar">
             <input type="text" placeholder="What type of property you are looking for" />
             <button className="search-btn">
@@ -85,7 +96,6 @@ const HomePage = () => {
 
           <h3 className="search-category-title">What are you looking for?</h3>
 
-          {/* Property Categories */}
           <div className="property-categories">
             <div className="category">
               <img src="YOUR_APARTMENT_IMAGE_URL" alt="Apartment" />
@@ -125,7 +135,54 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+      </div> */}
+
+
+<div className="homepage-container">
+      <div className="search-section">
+        <h1 className="search-title">Believe in finding it</h1>
+        <p className="search-subtitle">Search properties for sale and to rent</p>
+
+        {/* Search Bar */}
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="What type of property you are looking for?"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button className="search-btn" onClick={handleSearch}>
+            <FaSearch />
+          </button>
+        </div>
+
+        <h3 className="search-category-title">What are you looking for?</h3>
+
+        {/* Property Categories */}
+        <div className="property-categories">
+          {[
+            { name: "Apartment", img: "YOUR_APARTMENT_IMAGE_URL" },
+            { name: "Modern Villa", img: "YOUR_MODERN_VILLA_IMAGE_URL" },
+            { name: "Town House", img: "YOUR_TOWN_HOUSE_IMAGE_URL" },
+            { name: "PG's/Co-Living", img: "YOUR_CO_LIVING_IMAGE_URL" },
+            { name: "Wind Farm", img: "YOUR_WIND_FARM_IMAGE_URL" },
+            { name: "Desert Retreat", img: "YOUR_DESERT_RETREAT_IMAGE_URL" },
+            { name: "Private Island", img: "YOUR_PRIVATE_ISLAND_IMAGE_URL" },
+            { name: "Lake Side", img: "YOUR_LAKE_SIDE_IMAGE_URL" },
+            { name: "Luxury Pools", img: "YOUR_LUXURY_POOLS_IMAGE_URL" },
+          ].map((category) => (
+            <div
+              key={category.name}
+              className="category"
+              onClick={() => handleCategoryClick(category.name)}
+            >
+              <img src={category.img} alt={category.name} />
+              <span>{category.name}</span>
+            </div>
+          ))}
+        </div>
       </div>
+    </div>
 
       {/* Section: Top Rated Properties */}
       <div className="landing-page">
