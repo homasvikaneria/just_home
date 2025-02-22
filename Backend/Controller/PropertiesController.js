@@ -1,19 +1,35 @@
 // just_home/Backend/Controller/PropertiesController.js
 import { Property } from '../Model/Properties.Model.js';
 
-// GET /properties: Fetch all properties
+// GET /properties: Fetch all properties with optional search query
 export const getAllProperties = async (req, res) => {
     try {
-        const propertiesList = await Property.find();
-        if (propertiesList.length > 0) {
-            res.status(200).json(propertiesList);
-        } else {
-            res.status(404).send("No properties found.");
+        const { search } = req.query; // Get search query from request
+
+        let query = {}; // Default query (fetch all properties)
+
+        if (search) {
+            // Search across multiple fields (title, location, category, etc.)
+            query = {
+                $or: [
+                    { title: { $regex: search, $options: 'i' } },
+                    { location: { $regex: search, $options: 'i' } },
+                    { state: { $regex: search, $options: 'i' } },
+                    { category: { $regex: search, $options: 'i' } },
+                    { propertyType: { $regex: search, $options: 'i' } },
+                    { facilities: { $regex: search, $options: 'i' } },
+                ]
+            };
         }
+
+        const propertiesList = await Property.find(query);
+
+        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No properties found.");
     } catch (err) {
         res.status(500).json({ error: "Internal server error", details: err.message });
     }
 };
+
 
 // GET /properties/city/:cityName - Fetch properties by city
 export const getPropertiesByCity = async (req, res) => {
