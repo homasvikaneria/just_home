@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Mainnavbar from "./Components/Mainnav/Mainnavbar";
 import LandingPage from "../src/Components/LandingPage/LandingPage.jsx";
 import HomePage from "../src/Components/HomePage/HomePage.jsx";
+import Footer from "../src/Components/Footer/Footer.jsx"; 
+
 
 
 
@@ -17,6 +19,7 @@ const App = () => {
       <Route path="/homepage" element={<HomePage />} />
 
       </Routes>
+      <Footer/>
     </Router>
   );
 };

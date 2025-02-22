@@ -1,0 +1,89 @@
+/* Footer Styles */
+.footer {
+    background-color: #fff;
+    padding: 40px 80px;
+    font-family: "Poppins", sans-serif;
+    color: #000;
+  }
+  
+  .footer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+    max-width: 1200px;
+    margin: auto;
+  }
+  
+  .footer-logo img {
+    width: 140px;
+    margin-bottom: 20px;
+  }
+  
+  .footer-sections {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  .footer-column {
+    flex: 1;
+    min-width: 180px;
+    margin-bottom: 20px;
+  }
+  
+  .footer-column h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .footer-column ul li {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .app-links {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .store-link {
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  
+  .store-badge {
+    width: 140px;
+  }
+  
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 30px;
+  }
+  
+  .footer-bottom h3 {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .icon {
+    font-size: 18px;
+    color: #000;
+    cursor: pointer;
+  }
+  
