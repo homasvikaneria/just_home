@@ -263,18 +263,20 @@
   
   /* Properties Section */
   .section-title {
-    /* margin-top: 30px; */
+    margin-top: 30px;
     font-size: 2rem;
     font-weight: bold;
+    text-decoration: underline;
   }
   
   .properties-container {
     display: flex;
     justify-content: center;
     gap: 20px;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     padding: 20px;
-    margi
+    margin:15px 0px 0px 0px;
+    
   }
   
   .property-card {
@@ -314,3 +316,84 @@
 
 
 
+
+
+
+
+
+  .real-estate-agent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px 80px;
+    background-color: #F9F9F9;
+    margin: 50px 0px 0px 0px;
+  }
+  
+  .agent-text {
+    max-width: 35%;
+    margin: 0px 0px 0px 50px;
+  }
+  
+  .agent-text h2 {
+    font-size: 38px; /* Ensuring it stays on two lines if needed */
+    font-weight: 700;
+    color: #1a202c;
+    line-height: 1.2;
+  }
+  
+  .agent-text p {
+    font-size: 16px;
+    color: #4a5568;
+    margin-top: 15px;
+    line-height: 1.5;
+  }
+  
+  .cta-container {
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+  }
+  
+  .register-btn {
+    background-color: #E7C873;
+    color: black;
+  
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    display: inline-block;
+  }
+  
+  .register-btn:hover {
+    background-color: #e6c066;
+  }
+  
+  .contact-info {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a5568;
+    display: flex;
+    align-items: center;
+  }
+  
+  .agent-image-container {
+    width: 55%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .agent-image {
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 0px 50px 0px 0px;
+  }
+  
+
+
+  

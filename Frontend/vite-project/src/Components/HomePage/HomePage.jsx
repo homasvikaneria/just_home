@@ -19,7 +19,7 @@ const HomePage = () => {
         const sortedProperties = response.data.sort((a, b) => b.overallRating - a.overallRating);
 
         // Get top 3 properties
-        setProperties(sortedProperties.slice(0, 3));
+        setProperties(sortedProperties.slice(0, 4));
       } catch (error) {
         console.error("Error fetching properties:", error);
       }
@@ -130,13 +130,13 @@ const HomePage = () => {
       {/* Section: Top Rated Properties */}
       <div className="landing-page">
         {/* Cover Image Section */}
-        <div className="cover-image">
+        {/* <div className="cover-image">
           <img src="https://source.unsplash.com/1600x600/?real-estate" alt="Cover" />
           <div className="cover-text">
             <h1>Find Your Dream Home</h1>
             <p>Discover the best properties with top ratings</p>
           </div>
-        </div>
+        </div> */}
 
         <h2 className="section-title">Top Rated Properties</h2>
         <div className="properties-container">
@@ -158,6 +158,24 @@ const HomePage = () => {
           ))}
         </div>
       </div>
+
+{/* Section: Become a Real Estate Agent */}
+<section className="real-estate-agent">
+  <div className="agent-text">
+    <h2>Become a Real Estate Agent</h2>
+    <p>Pellentesque egestas elementum egestas faucibus sem. Velit nunc egestas ut morbi. Leo diam diam.</p>
+    <div className="cta-container">
+      <a href="/register" className="register-btn">Register Now →</a>
+      <span className="contact-info">📞 +68 685 88666</span>
+    </div>
+  </div>
+
+  <div className="agent-image-container">
+    <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740196542/gjtsz4xhmpfjb6vjllf1.png" alt="Real Estate Agent" className="agent-image" />
+  </div>
+</section>
+
+
 
     </div>
   );
