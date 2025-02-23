@@ -1,7 +1,4 @@
-// just_home/Backend/Model/Users.Model.js
 // Backend/Model/Users.Model.js
-// practice/Backend/Model/Users.Model.js
-
 import mongoose from 'mongoose';
 
 const usersSchema = mongoose.Schema({
@@ -16,37 +13,30 @@ const usersSchema = mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique:true
+        unique: true
     },
     password: {
         type: String,
         required: true
     },
-    profileImagePath:{
-        type:String,
-        default:""
+    profileImagePath: {
+        type: String,
+        default: ""
     },
-    wishList:{
-        type:Array,
-        default:[]
+    wishList: {
+        type: Array,
+        default: []
     },
-    resirvationList:{
-        type:Array,
-        default:[]
+    reservationList: {  // Fixed typo (was resirvationList)
+        type: Array,
+        default: []
     },
-    prpertyList:{
-        type:Array,
-        default:[]
-    },
-    wishList:{
-        type:Array,
-        default:[]
-    },
+    propertyList: {  // Fixed typo (was prpertyList)
+        type: Array,
+        default: []
+    }
+}, {
+    timestamps: true
+});
 
-
-},{
-    timestamps:true
-})
-
-
-export const Users = mongoose.model("Users", usersSchema) 
+export const Users = mongoose.model("Users", usersSchema);
