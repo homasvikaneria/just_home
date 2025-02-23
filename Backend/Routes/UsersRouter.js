@@ -1,14 +1,11 @@
-// practice/Backend/Routes/UsersRouter.js
-import express from 'express'
-import { getUsers, getUserByEmail, addUser } from '../Controller/UsersController.js'
+import express from "express";
+import { getUsers, getUserByEmail, addUser, loginUser, upload } from "../Controller/UsersController.js";
 
-const UsersRouter = express.Router()
+const UsersRouter = express.Router();
 
+UsersRouter.get("/", getUsers);
+UsersRouter.get("/email/:emailId", getUserByEmail);
+UsersRouter.post("/register", upload.single("profileImage"), addUser);
+UsersRouter.post("/login", loginUser);
 
-UsersRouter.get("/", getUsers)
-UsersRouter.get("/email/:emailId", getUserByEmail); // Fix parameter case
-UsersRouter.post("/", addUser)
-
-
-
-export default UsersRouter
+export default UsersRouter;

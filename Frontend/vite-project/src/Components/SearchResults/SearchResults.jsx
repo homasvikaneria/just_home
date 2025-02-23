@@ -1,3 +1,4 @@
+// Frontend/vite-project/src/Components/SearchResults/SearchResults.jsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
 import "./SearchResults.css";
