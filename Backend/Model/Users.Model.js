@@ -15,14 +15,37 @@ const usersSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique:true
     },
     password: {
         type: String,
         required: true
     },
+    profileImagePath:{
+        type:String,
+        default:""
+    },
+    wishList:{
+        type:Array,
+        default:[]
+    },
+    resirvationList:{
+        type:Array,
+        default:[]
+    },
+    prpertyList:{
+        type:Array,
+        default:[]
+    },
+    wishList:{
+        type:Array,
+        default:[]
+    },
 
 
+},{
+    timestamps:true
 })
 
 
