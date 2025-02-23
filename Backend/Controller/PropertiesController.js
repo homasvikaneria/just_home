@@ -31,6 +31,27 @@ export const getAllProperties = async (req, res) => {
 };
 
 
+export const getPropertyById = async (req, res) => {
+    const { id } = req.params;
+    console.log("Fetching property with ID:", id); // Debugging
+
+    try {
+        const property = await Property.findById(id);
+        if (!property) {
+            console.log("Property not found"); // Debugging
+            return res.status(404).json({ message: "Property not found." });
+        }
+
+        console.log("Property found:", property); // Debugging
+        res.status(200).json(property);
+    } catch (err) {
+        console.error("Error fetching property:", err.message); // Debugging
+        res.status(500).json({ error: "Internal server error", details: err.message });
+    }
+};
+
+
+
 // GET /properties/city/:cityName - Fetch properties by city
 export const getPropertiesByCity = async (req, res) => {
     const cityName = req.params.cityName;

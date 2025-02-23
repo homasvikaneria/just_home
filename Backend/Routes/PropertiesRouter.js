@@ -2,6 +2,7 @@
 import express from 'express';
 import {
     getAllProperties,
+    getPropertyById,    
     getPropertiesByCity,
     getPropertiesByState,
     getPropertiesByCategory,
@@ -17,6 +18,7 @@ import {
 const router = express.Router();
 
 router.get('/', getAllProperties);
+
 router.get('/city/:cityName', getPropertiesByCity);
 router.get('/state/:stateName', getPropertiesByState);
 router.get('/category/:categoryName', getPropertiesByCategory);
@@ -27,5 +29,6 @@ router.get('/bedrooms/:number', getPropertiesByBedrooms);
 router.get('/status/:status', getPropertiesByStatus);
 router.get('/price', getPropertiesByPrice);
 router.post('/', addProperty);
+router.get('/:id', getPropertyById);
 
 export default router;
