@@ -1,37 +1,41 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux'; // Import Redux state
+import { useDispatch, useSelector } from 'react-redux';
 import './mainnavbar.css';
 
 const Mainnavbar = () => {
   const navigate = useNavigate();
-  const isLoggedIn = localStorage.getItem('user');
+  const dispatch = useDispatch();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Get user from Redux (Assuming you store user details in Redux)
   const user = useSelector((state) => state.user);
+  const isLoggedIn = Boolean(user); // ✅ Ensure boolean check
 
-  // Default profile image
   const defaultUserIcon = "https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129700/ytuunnzhvinksaxocspm.png";
-
-  // Use the user's profile image if available
   const userIconUrl = user?.profileImage || defaultUserIcon;
 
-  // Handle logout
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/');
+    dispatch({ type: "LOGOUT" }); // ✅ Clear Redux state
+    localStorage.removeItem("user"); // ✅ Remove user from storage
+    navigate("/");
+  };
+
+  const handleAddProperty = () => {
+    setDropdownOpen(false); // ✅ Close dropdown
+    navigate("/create-listing"); // ✅ Navigate to Create Listing
   };
 
   return (
     <nav className="navbar">
-      {/* Left Side: Logo & Brand Name (Clickable) */}
-      <Link to="/" className="navbar-left">
-        <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129590/vscf21yryptnxlvzwoky.png" alt="JustHome Logo" className="logo" />
+      <div className="navbar-left" onClick={() => navigate("/")}>
+        <img 
+          src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129590/vscf21yryptnxlvzwoky.png" 
+          alt="JustHome Logo" 
+          className="logo" 
+        />
         <span className="brand-name">JustHome</span>
-      </Link>
+      </div>
 
-      {/* Center: Navigation Links */}
       <div className="nav-links">
         <Link to={isLoggedIn ? "/mainproperties" : "/"}>Home</Link>
         <Link to="/blog">Blog</Link>
@@ -39,17 +43,25 @@ const Mainnavbar = () => {
         <Link to="/contact">Contact</Link>
       </div>
 
-      {/* Right Side: User Icon with Dropdown */}
       <div className="user">
         <button className="user-button" onClick={() => setDropdownOpen(!dropdownOpen)}>
           <img src={userIconUrl} alt="User Icon" className="user-icon" />
         </button>
 
-        {/* Dropdown Menu */}
         {dropdownOpen && (
           <div className="dropdown-menu">
-            <Link to="/profile">Profile</Link>
-            <button onClick={handleLogout}>Logout</button>
+            {isLoggedIn ? (
+              <>
+                <Link to="/profile">Profile</Link>
+                <button onClick={handleAddProperty}>Add a Property</button> {/* ✅ FIXED */}
+                <button onClick={handleLogout}>Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login">Sign In</Link>
+                <Link to="/register">Sign Up</Link>
+              </>
+            )}
           </div>
         )}
       </div>
