@@ -165,13 +165,14 @@ const HomePage = () => {
         </div>
       </div>
 
+
       {/* Section: Become a Real Estate Agent */}
       <section className="real-estate-agent">
         <div className="agent-text">
           <h2>Become a Real Estate Agent</h2>
           <p>Pellentesque egestas elementum egestas faucibus sem. Velit nunc egestas ut morbi. Leo diam diam.</p>
           <div className="cta-container">
-            <a href="/register" className="register-btn">Register Now →</a>
+            <a href="/register-agent" className="register-btn">Register Now →</a>
             <span className="contact-info">📞 +68 685 88666</span>
           </div>
         </div>

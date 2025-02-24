@@ -1,13 +1,14 @@
 // Frontend/vite-project/src/Components/SearchResults/SearchResults.jsx
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useLocation, useNavigate } from "react-router-dom";
 import "./SearchResults.css";
 
 const SearchResults = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Initialize navigation
+  const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState({}); // Store favorite states
 
   const queryParams = new URLSearchParams(location.search);
   const searchQuery = queryParams.get("query");
@@ -24,6 +25,14 @@ const SearchResults = () => {
     }
   }, [searchQuery]);
 
+  // Function to toggle wishlist (heart)
+  const toggleFavorite = (propertyId) => {
+    setFavorites((prevFavorites) => ({
+      ...prevFavorites,
+      [propertyId]: !prevFavorites[propertyId],
+    }));
+  };
+
   return (
     <div className="findhomes-wrapper">
       <h2 className="findhomes-heading">Properties Matching "{searchQuery}"</h2>
@@ -32,17 +41,22 @@ const SearchResults = () => {
       ) : properties.length > 0 ? (
         <div className="findhomes-grid">
           {properties.map((property) => (
-            <div
-              key={property._id}
-              className="findhomes-card"
-              onClick={() => navigate(`/property/${property._id}`)} // Navigate on click
-              style={{ cursor: "pointer" }} // Indicate it's clickable
-            >
-              <div className="findhomes-image-wrapper">
+            <div key={property._id} className="findhomes-card" style={{ cursor: "pointer" }}>
+              <div className="findhomes-image-wrapper" onClick={() => navigate(`/property/${property._id}`)}>
                 <img src={property.coverimg} alt={property.title} className="findhomes-image" />
-                <div className="findhomes-wishlist">❤️</div>
+                <div
+                  className="findhomes-wishlist"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent navigation when clicking heart
+                    toggleFavorite(property._id);
+                  }}
+                >
+                  <span className={`heart ${favorites[property._id] ? "filled" : "outline"}`}>
+                    ♥
+                  </span>
+                </div>
               </div>
-              <div className="findhomes-details">
+              <div className="findhomes-details" onClick={() => navigate(`/property/${property._id}`)}>
                 <h3 className="findhomes-title">{property.title}</h3>
                 <p className="findhomes-category">{property.propertyType}</p>
                 <p className="findhomes-location">📍 {property.location}</p>
@@ -51,9 +65,7 @@ const SearchResults = () => {
                 </p>
                 <p className="findhomes-availability">{property.status}</p>
                 <p className="findhomes-summary">
-                  {property.description.length > 100
-                    ? property.description.substring(0, 100) + "..."
-                    : property.description}
+                  {property.description.length > 100 ? property.description.substring(0, 100) + "..." : property.description}
                 </p>
               </div>
             </div>
