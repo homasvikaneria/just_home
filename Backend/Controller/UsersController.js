@@ -1,6 +1,6 @@
 // Backend/Controller/UsersController.js
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import multer from "multer";
@@ -19,8 +19,8 @@ const storage = multer.diskStorage({
         cb(null, "public/uploads/");
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname);
-    }
+        cb(null, Date.now() + "-" + file.originalname); // Unique filename
+    },
 });
 export const upload = multer({ storage });
 
@@ -57,6 +57,8 @@ export const getUserByEmail = async (req, res) => {
 // POST: Add new user
 export const addUser = async (req, res) => {
     try {
+        console.log("📸 Uploaded File:", req.file); // Debugging
+
         const { name, surname, email, password } = req.body;
 
         // Check if the user already exists
@@ -69,18 +71,23 @@ export const addUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        // Handle profile image
+        const profileImagePath = req.file ? req.file.filename : "default.png";
+        console.log("🖼️ Profile Image Path:", profileImagePath); // Debugging
+
         // Create new user
         const newUser = new Users({
             name,
             surname,
             email,
             password: hashedPassword,
-            profileImagePath: req.file ? req.file.path : "", // If file upload is enabled
+            profileImagePath, // Stores only the filename
         });
 
         await newUser.save();
         res.status(201).json({ message: "User registered successfully", user: newUser });
     } catch (error) {
+        console.error("❌ Error:", error); // Debugging
         res.status(500).json({ message: "Error registering user", error });
     }
 };
@@ -100,9 +107,12 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
+        if (!process.env.JWT_SECRET) {
+            return res.status(500).json({ message: "JWT Secret not configured" });
+        }
+
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
         res.status(200).json({ token, user });
-
     } catch (error) {
         res.status(500).json({ message: "Server error", error });
     }

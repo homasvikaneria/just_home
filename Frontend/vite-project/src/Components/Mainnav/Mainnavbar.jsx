@@ -1,31 +1,41 @@
-// just_home/Frontend/vite-project/src/Components/Mainnav/Mainnavbar.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import './mainnavbar.css';
 
 const Mainnavbar = () => {
   const navigate = useNavigate();
-  const isLoggedIn = localStorage.getItem('user');
+  const dispatch = useDispatch();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Cloudinary Links
-  const logoUrl = "https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129590/vscf21yryptnxlvzwoky.png";
-  const userIconUrl = "https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129700/ytuunnzhvinksaxocspm.png";
+  const user = useSelector((state) => state.user);
+  const isLoggedIn = Boolean(user); // ✅ Ensure boolean check
 
-  // Handle logout
+  const defaultUserIcon = "https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129700/ytuunnzhvinksaxocspm.png";
+  const userIconUrl = user?.profileImage || defaultUserIcon;
+
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/');
+    dispatch({ type: "LOGOUT" }); // ✅ Clear Redux state
+    localStorage.removeItem("user"); // ✅ Remove user from storage
+    navigate("/");
+  };
+
+  const handleAddProperty = () => {
+    setDropdownOpen(false); // ✅ Close dropdown
+    navigate("/create-listing"); // ✅ Navigate to Create Listing
   };
 
   return (
     <nav className="navbar">
-      {/* Left Side: Logo */}
-      <div className="navbar-left">
-        <img src={logoUrl} alt="JustHome Logo" className="logo" />
+      <div className="navbar-left" onClick={() => navigate("/")}>
+        <img 
+          src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129590/vscf21yryptnxlvzwoky.png" 
+          alt="JustHome Logo" 
+          className="logo" 
+        />
         <span className="brand-name">JustHome</span>
       </div>
 
-      {/* Center: Navigation Links */}
       <div className="nav-links">
         <Link to={isLoggedIn ? "/mainproperties" : "/"}>Home</Link>
         <Link to="/blog">Blog</Link>
@@ -33,11 +43,27 @@ const Mainnavbar = () => {
         <Link to="/contact">Contact</Link>
       </div>
 
-      {/* Right Side: User Icon */}
       <div className="user">
-        <button className="user-button">
+        <button className="user-button" onClick={() => setDropdownOpen(!dropdownOpen)}>
           <img src={userIconUrl} alt="User Icon" className="user-icon" />
         </button>
+
+        {dropdownOpen && (
+          <div className="dropdown-menu">
+            {isLoggedIn ? (
+              <>
+                <Link to="/profile">Profile</Link>
+                <button onClick={handleAddProperty}>Add a Property</button> {/* ✅ FIXED */}
+                <button onClick={handleLogout}>Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login">Sign In</Link>
+                <Link to="/register">Sign Up</Link>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );

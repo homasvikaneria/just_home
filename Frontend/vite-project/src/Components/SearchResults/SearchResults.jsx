@@ -14,7 +14,7 @@ const SearchResults = () => {
 
   useEffect(() => {
     if (searchQuery) {
-      fetch(`http://localhost:3000/properties?search=${encodeURIComponent(searchQuery)}`)
+      fetch(`http://localhost:8000/properties?search=${encodeURIComponent(searchQuery)}`)
         .then((res) => res.json())
         .then((data) => {
           setProperties(Array.isArray(data) ? data : []);
