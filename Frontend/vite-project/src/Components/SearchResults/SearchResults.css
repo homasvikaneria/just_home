@@ -14,25 +14,26 @@
     margin-bottom: 20px;
 }
 
-/* Grid Layout with Increased Spacing */
+/* Grid Layout */
 .findhomes-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 60px; /* Increased gap between cards */
+    gap: 30px; /* Adjusted gap */
     justify-content: center;
 }
 
 /* Property Card */
 .findhomes-card {
-    width: 500px;
+    width: 500px; /* Adjusted width */
     height: 220px;
     display: flex;
     background: white;
-    border-radius: 15px;
+    border-radius: 20px; /* Rounded corners */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.2s ease-in-out;
     cursor: pointer;
+    padding: 15px; /* Padding inside */
 }
 
 .findhomes-card:hover {
@@ -42,8 +43,10 @@
 /* Image Section */
 .findhomes-image-wrapper {
     position: relative;
-    width: 45%; /* Image takes up 45% of the card */
+    width: 45%;
     height: 100%;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .findhomes-image {
@@ -52,39 +55,28 @@
     object-fit: cover;
 }
 
-/* Wishlist (Heart Icon) - Inside Image */
+/* Wishlist (Heart Icon) */
 .findhomes-wishlist {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.4); /* Dark transparent background */
+    top: 0px;
+    right: 12px;
     cursor: pointer;
-    transition: transform 0.2s ease-in-out, background 0.3s;
+    transition: transform 0.2s ease-in-out;
 }
 
-/* Default: White heart with black outline */
+/* Default: White heart */
 .heart.outline {
-    font-size: 22px;
-    font-weight: 300;
+    font-size: 30px;
     color: white;
-    -webkit-text-stroke: 2px black; /* Creates black outline effect */
 }
 
 /* Filled heart with red color */
 .heart.filled {
-    font-size: 22px;
-    font-weight: 100;
+    font-size: 30px;
     color: red;
-    -webkit-text-stroke: 0px; /* Removes outline when filled */
 }
 
-/* Smooth Scaling Effect */
+/* Heart Scaling Effect */
 .findhomes-wishlist:hover {
     transform: scale(1.1);
 }
@@ -92,7 +84,7 @@
 /* Property Details */
 .findhomes-details {
     width: 55%;
-    padding: 15px;
+    padding: 20px; /* Padding inside */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
