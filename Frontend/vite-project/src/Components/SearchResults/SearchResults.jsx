@@ -1,13 +1,15 @@
 // Frontend/vite-project/src/Components/SearchResults/SearchResults.jsx
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaRegHeart, FaHeart } from "react-icons/fa"; // Import heart icons
 import "./SearchResults.css";
 
 const SearchResults = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Initialize navigation
+  const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [likedProperties, setLikedProperties] = useState({});
 
   const queryParams = new URLSearchParams(location.search);
   const searchQuery = queryParams.get("query");
@@ -24,6 +26,15 @@ const SearchResults = () => {
     }
   }, [searchQuery]);
 
+  // Toggle wishlist (heart icon)
+  const toggleLike = (propertyId, e) => {
+    e.stopPropagation(); // Prevent navigation when clicking the heart
+    setLikedProperties((prev) => ({
+      ...prev,
+      [propertyId]: !prev[propertyId], // Toggle like state
+    }));
+  };
+
   return (
     <div className="findhomes-wrapper">
       <h2 className="findhomes-heading">Properties Matching "{searchQuery}"</h2>
@@ -35,13 +46,25 @@ const SearchResults = () => {
             <div
               key={property._id}
               className="findhomes-card"
-              onClick={() => navigate(`/property/${property._id}`)} // Navigate on click
-              style={{ cursor: "pointer" }} // Indicate it's clickable
+              onClick={() => navigate(`/property/${property._id}`)}
+              style={{ cursor: "pointer" }}
             >
               <div className="findhomes-image-wrapper">
                 <img src={property.coverimg} alt={property.title} className="findhomes-image" />
-                <div className="findhomes-wishlist">❤️</div>
+
+                {/* Wishlist Icon (Heart) */}
+                <div
+                  className="findhomes-wishlist"
+                  onClick={(e) => toggleLike(property._id, e)}
+                >
+                  {likedProperties[property._id] ? (
+                    <FaHeart className="heart filled" /> // Filled red heart
+                  ) : (
+                    <FaRegHeart className="heart outline" /> // White heart with black border
+                  )}
+                </div>
               </div>
+
               <div className="findhomes-details">
                 <h3 className="findhomes-title">{property.title}</h3>
                 <p className="findhomes-category">{property.propertyType}</p>
