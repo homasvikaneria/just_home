@@ -33,21 +33,18 @@ export const getAllProperties = async (req, res) => {
 
 export const getPropertyById = async (req, res) => {
     const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).json({ error: "Property ID is required" });
+    }
+
     try {
         const property = await Property.findById(id);
         if (!property) {
             return res.status(404).json({ message: "Property not found." });
         }
 
-        let priceDetails = "";
-
-        if (property.listingType === "rent") {
-            priceDetails = `Rent for ${property.rentalDuration}: $${property.price} per ${property.priceUnit}`;
-        } else if (property.listingType === "sale") {
-            priceDetails = `For Sale: $${property.price}`;
-        }
-
-        res.status(200).json({ ...property._doc, priceDetails });
+        res.status(200).json(property);
     } catch (err) {
         res.status(500).json({ error: "Internal server error", details: err.message });
     }
