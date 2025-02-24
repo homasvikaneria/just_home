@@ -159,53 +159,60 @@
 
 // export default Register;
 
-
-
-// src/Components/Register/Register.jsx
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom";
+import { MdUpload } from "react-icons/md";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
+    surname: "",
     email: "",
     password: "",
     confirmPassword: "",
+    profileImage: null,
   });
 
-  const navigate = useNavigate(); // Use for redirection
+  const navigate = useNavigate();
 
   // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle file upload
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prevData) => ({
+        ...prevData,
+        profileImage: file,
+      }));
+    }
+  };
+
   // 🛠️ Submit Form and Send Data to Backend
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate password match
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
-    // Create a data object (without file)
-    const data = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      password: formData.password,
-    };
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("surname", formData.surname);
+    data.append("email", formData.email);
+    data.append("password", formData.password);
+    if (formData.profileImage) {
+      data.append("profileImage", formData.profileImage);
+    }
 
     try {
       const response = await fetch("http://localhost:8000/users/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Sending JSON
-        },
-        body: JSON.stringify(data), // Send JSON data
+        body: data,
       });
 
       const result = await response.json();
@@ -213,7 +220,7 @@ const Register = () => {
 
       if (response.ok) {
         alert("Registration Successful!");
-        navigate("/login"); // Redirect to login page
+        navigate("/login");
       } else {
         alert(result.message || "Registration Failed");
       }
@@ -232,17 +239,17 @@ const Register = () => {
 
         <input
           type="text"
-          name="firstName"
+          name="name"
           placeholder="First Name"
-          value={formData.firstName}
+          value={formData.name}
           required
           onChange={handleChange}
         />
         <input
           type="text"
-          name="lastName"
+          name="surname"
           placeholder="Last Name"
-          value={formData.lastName}
+          value={formData.surname}
           required
           onChange={handleChange}
         />
@@ -271,6 +278,35 @@ const Register = () => {
           onChange={handleChange}
         />
 
+        {/* File Upload */}
+        <input
+          type="file"
+          id="image"
+          name="profileImage"
+          accept="image/*"
+          hidden
+          onChange={handleFileChange}
+        />
+        <label htmlFor="image">
+          <div style={{ cursor: "pointer", margin: "10px 0" }}>
+            {formData.profileImage ? (
+              <img
+                src={URL.createObjectURL(formData.profileImage)}
+                alt="profile"
+                style={{
+                  width: "60px",
+                  height: "60px",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                  border: "2px solid #ccc",
+                }}
+              />
+            ) : (
+              <MdUpload size={50} />
+            )}
+          </div>
+        </label>
+
         <button type="submit" className="btn-secondary rounded mt-2">
           Register
         </button>
@@ -284,3 +320,4 @@ const Register = () => {
 };
 
 export default Register;
+
