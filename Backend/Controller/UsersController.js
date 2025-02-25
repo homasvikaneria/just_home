@@ -192,7 +192,7 @@ export const removeFromWishlist = async (req, res) => {
 };
 
 
-exports.getWishlist = async (req, res) => {
+export const getWishlist = async (req, res) => {
     try {
       const user = await Users.findById(req.params.userId).populate("wishList");
   
