@@ -173,6 +173,10 @@ const Register = () => {
     profileImage: null,
   });
 
+  const [imagePreview, setImagePreview] = useState(null); // ✅ Image preview state
+  const [error, setError] = useState(""); // ✅ Error message state
+  const [isLoading, setIsLoading] = useState(false); // ✅ Loading state
+
   const navigate = useNavigate();
 
   // Handle input change
@@ -188,15 +192,32 @@ const Register = () => {
         ...prevData,
         profileImage: file,
       }));
+      setImagePreview(URL.createObjectURL(file)); // ✅ Create preview
     }
   };
 
   // 🛠️ Submit Form and Send Data to Backend
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // ✅ Reset previous errors
+    setIsLoading(true); // ✅ Set loading state
+
+    // 🚨 Client-side validation
+    if (
+      !formData.name ||
+      !formData.surname ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      setError("All fields are required!");
+      setIsLoading(false);
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      setError("Passwords do not match!");
+      setIsLoading(false);
       return;
     }
 
@@ -222,20 +243,24 @@ const Register = () => {
         alert("Registration Successful!");
         navigate("/login");
       } else {
-        alert(result.message || "Registration Failed");
+        setError(result.message || "Registration Failed");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Something went wrong, please try again.");
+      setError("Something went wrong, please try again.");
+    } finally {
+      setIsLoading(false); // ✅ Reset loading state
     }
   };
 
   return (
-    <div>
+    <div className="padding" style={{ padding: "80px" }}>
       <form onSubmit={handleSubmit}>
         <div>
           <h4>Sign Up</h4>
         </div>
+
+        {error && <p style={{ color: "red" }}>{error}</p>} {/* ✅ Show errors */}
 
         <input
           type="text"
@@ -289,9 +314,9 @@ const Register = () => {
         />
         <label htmlFor="image">
           <div style={{ cursor: "pointer", margin: "10px 0" }}>
-            {formData.profileImage ? (
+            {imagePreview ? (
               <img
-                src={URL.createObjectURL(formData.profileImage)}
+                src={imagePreview}
                 alt="profile"
                 style={{
                   width: "60px",
@@ -307,8 +332,8 @@ const Register = () => {
           </div>
         </label>
 
-        <button type="submit" className="btn-secondary rounded mt-2">
-          Register
+        <button type="submit" disabled={isLoading} className="btn-secondary rounded mt-2">
+          {isLoading ? "Registering..." : "Register"} {/* ✅ Show loading state */}
         </button>
 
         <div>
@@ -320,4 +345,3 @@ const Register = () => {
 };
 
 export default Register;
-

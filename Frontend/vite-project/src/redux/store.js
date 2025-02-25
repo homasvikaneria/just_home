@@ -1,5 +1,5 @@
-// Frontend/vite-project/src/redux/store.js
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import { userReducer, listingsReducer } from "./state";
 import {
   persistStore,
   persistReducer,
@@ -11,7 +11,12 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import state from "./state";
+
+// ✅ Combine all reducers before persisting
+const rootReducer = combineReducers({
+  user: userReducer,
+  listings: listingsReducer,
+});
 
 const persistConfig = {
   key: "root",
@@ -19,7 +24,8 @@ const persistConfig = {
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, state);
+// ✅ Persist the combined reducer
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -31,5 +37,5 @@ export const store = configureStore({
     }),
 });
 
-export let persistor = persistStore(store);
-
+// ✅ Use `const` instead of `let` for consistency
+export const persistor = persistStore(store);
