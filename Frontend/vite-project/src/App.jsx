@@ -12,6 +12,8 @@ import Register from "./Components/Register/Register";
 import Login from "./Components/Login/Login";
 import Listings from "./Components/Listing/Listings";
 import CreateListing from "./Components/CreateListing/CreateListing";
+import Wishlist from "./Components/Wishlist/Wishlist"; // ✅ Import Wishlist page
+
 // import NotFound from "./Components/NotFound/NotFound"; // ✅ Handle 404 pages
 
 // 🔒 Protected Route Component
@@ -32,6 +34,9 @@ const App = () => {
         <Route path="/property/:id" element={<PropertyDetails />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/wishlist" element={<Wishlist />} />
+
+        
 
 
         {/* 🔒 Protect Routes that Require Authentication */}

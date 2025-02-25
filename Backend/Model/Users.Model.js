@@ -2,41 +2,15 @@
 import mongoose from 'mongoose';
 
 const usersSchema = mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    surname: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    profileImagePath: {
-        type: String,
-        default: ""
-    },
-    wishList: {
-        type: Array,
-        default: []
-    },
-    reservationList: {  // Fixed typo (was resirvationList)
-        type: Array,
-        default: []
-    },
-    propertyList: {  // Fixed typo (was prpertyList)
-        type: Array,
-        default: []
-    }
-}, {
-    timestamps: true
-});
+    name: { type: String, required: true },
+    surname: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    profileImagePath: { type: String, default: "" },
+    
+    wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Properties" }],  // ✅ Store references
+    reservationList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reservations" }], 
+    propertyList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Properties" }] 
+}, { timestamps: true });
 
 export const Users = mongoose.model("Users", usersSchema);

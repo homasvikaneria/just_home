@@ -5,6 +5,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import multer from "multer";
 import { Users } from "../Model/Users.Model.js";
+import { Property } from "../Model/Properties.Model.js";
+
 
 // Ensure the "uploads" directory exists
 const uploadDir = path.join("public/uploads");
@@ -117,3 +119,90 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ message: "Server error", error });
     }
 };
+
+
+export const updateWishlist = async (req, res) => {
+    try {
+        const { userId, propertyId } = req.params;
+
+        // Validate user
+        const user = await Users.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        // Check if the property is already in the wishlist
+        const index = user.wishList.indexOf(propertyId);
+        if (index === -1) {
+            user.wishList.push(propertyId); // ✅ Add to wishlist
+        } else {
+            user.wishList.splice(index, 1); // ❌ Remove from wishlist (toggle)
+        }
+
+        await user.save();
+        res.status(200).json({ message: "Wishlist updated", wishList: user.wishList });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+
+
+export const getUserWishlist = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const user = await Users.findById(userId).populate({
+            path: "wishList",
+            select: "title price location coverimg propertyType status description",
+        });
+
+        if (!user) {
+            return res.status(404).json({ wishList: [] }); // ✅ Always return an array
+        }
+
+        res.status(200).json({ wishList: user.wishList || [] }); // ✅ Ensure fallback array
+    } catch (error) {
+        console.error("Error fetching wishlist:", error);
+        res.status(500).json({ message: "Error fetching wishlist", wishList: [] });
+    }
+};
+
+
+export const removeFromWishlist = async (req, res) => {
+    try {
+        const { userId, propertyId } = req.params;
+
+        // Find the user
+        const user = await Users.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        // Remove property from wishlist
+        user.wishList = user.wishList.filter(id => id.toString() !== propertyId);
+
+        // Save updated user data
+        await user.save();
+
+        res.status(200).json({ message: "Property removed from wishlist", wishList: user.wishList });
+    } catch (error) {
+        res.status(500).json({ message: "Error removing from wishlist", error: error.message });
+    }
+};
+
+
+exports.getWishlist = async (req, res) => {
+    try {
+      const user = await Users.findById(req.params.userId).populate("wishList");
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      res.json({ wishList: user.wishList });
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
