@@ -12,7 +12,6 @@ import Register from "./Components/Register/Register";
 import Login from "./Components/Login/Login";
 import Listings from "./Components/Listing/Listings";
 import CreateListing from "./Components/CreateListing/CreateListing";
-import Dashboard from "./Components/Dashboard/Dashboard";
 // import NotFound from "./Components/NotFound/NotFound"; // ✅ Handle 404 pages
 
 // 🔒 Protected Route Component
@@ -33,7 +32,6 @@ const App = () => {
         <Route path="/property/:id" element={<PropertyDetails />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
 
 
         {/* 🔒 Protect Routes that Require Authentication */}
