@@ -1,19 +1,17 @@
+// Frontend/vite-project/src/redux/state.js
 import { createSlice } from "@reduxjs/toolkit";
 
-// Load initial state from localStorage
+// Load initial state from localStorage safely
 const initialUser = JSON.parse(localStorage.getItem("user")) || null;
 const initialToken = localStorage.getItem("token") || null;
 
-const initialState = {
-    user: initialUser,
-    token: initialToken,
-    listings: [],
-};
-
-// User Slice
-export const userSlice = createSlice({
+// 🔹 User Slice
+const userSlice = createSlice({
     name: "user",
-    initialState,
+    initialState: {
+        user: initialUser,
+        token: initialToken,
+    },
     reducers: {
         setLogin: (state, action) => {
             state.user = action.payload.user;
@@ -30,19 +28,21 @@ export const userSlice = createSlice({
     },
 });
 
-// Listings Slice
-export const listingsSlice = createSlice({
+// 🔹 Listings Slice
+const listingsSlice = createSlice({
     name: "listings",
     initialState: { listings: [] },
     reducers: {
         setListings: (state, action) => {
-            state.listings = action.payload.listings;
+            state.listings = action.payload;
         },
     },
 });
 
+// ✅ Export actions
 export const { setLogin, setLogout } = userSlice.actions;
 export const { setListings } = listingsSlice.actions;
 
+// ✅ Export reducers correctly
 export const userReducer = userSlice.reducer;
-export const listingsReducer = listingsSlice.reducer;
+export const listingsReducer = listingsSlice.reducer; // ✅ Ensure this export exists

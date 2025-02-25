@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import './mainnavbar.css';
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import "./mainnavbar.css";
+import { setLogout } from "../../redux/state";
+import { persistor } from "../../redux/store"; // ✅ Import persistor
 
 const Mainnavbar = () => {
   const navigate = useNavigate();
@@ -9,19 +11,38 @@ const Mainnavbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null); // 🔹 Reference for dropdown menu
 
-  const user = useSelector((state) => state.user);
-  const isLoggedIn = Boolean(user);
+  // ✅ Ensure accessing the user object properly from Redux state
+  const user = useSelector((state) => state.user?.user);
+  const isLoggedIn = user !== null; // ✅ Fix login detection
 
-  const defaultUserIcon = "https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129700/ytuunnzhvinksaxocspm.png";
+  const defaultUserIcon =
+    "https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129700/ytuunnzhvinksaxocspm.png";
   const userIconUrl = user?.profileImage || defaultUserIcon;
+  const userName = user?.name || "User"; // ✅ Now correctly displays name
 
+  // ✅ Handle Logout
   const handleLogout = () => {
-    dispatch({ type: "LOGOUT" });
-    localStorage.removeItem("user");
+    dispatch(setLogout()); // ✅ Reset Redux state
+    persistor.purge(); // ✅ Clear persisted Redux state
+    persistor.flush(); // ✅ Immediately apply purge
+    localStorage.clear(); // ✅ Remove user/token
+    sessionStorage.clear();
+    setDropdownOpen(false);
     navigate("/");
+
+    // ✅ Force UI update after logout
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
-  // 🔹 Handle click outside the dropdown to close it
+  // 🔹 Add Property function
+  const handleAddProperty = () => {
+    setDropdownOpen(false); // ✅ Close dropdown
+    navigate("/create-listing"); // ✅ Navigate to the Add Property page
+  };
+
+  // 🔹 Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -41,10 +62,10 @@ const Mainnavbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-left" onClick={() => navigate("/")}>
-        <img 
-          src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129590/vscf21yryptnxlvzwoky.png" 
-          alt="JustHome Logo" 
-          className="logo" 
+        <img
+          src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129590/vscf21yryptnxlvzwoky.png"
+          alt="JustHome Logo"
+          className="logo"
         />
         <span className="brand-name">JustHome</span>
       </div>
@@ -66,16 +87,18 @@ const Mainnavbar = () => {
           <div className="dropdown-menu">
             {isLoggedIn ? (
               <>
-                <Link to="/wishlist">🖤 Wishlist</Link>
-                <Link to="/create-listing">🏠 Add a Property</Link>
-                <Link to="/my-reviews">⭐ Your Reviews</Link>
-                <Link to="/edit-profile">✏️ Edit Profile</Link>
-                <button onClick={handleLogout} className="logout-btn">🚪 Logout</button>
+                {/* 🔹 Show the user's name */}
+                <div className="dropdown-header">👤 {userName}</div>
+                <Link to="/wishlist">Wishlist</Link>
+                <Link to="/profile">Edit Profile</Link>
+                <Link to="/your-reviews">Your Reviews</Link>
+                <button onClick={handleAddProperty}>Add a Property</button>
+                <button onClick={handleLogout}>Logout</button>
               </>
             ) : (
               <>
-                <Link to="/login">🔑 Sign In</Link>
-                <Link to="/register">📝 Sign Up</Link>
+                <Link to="/login">Sign In</Link>
+                <Link to="/register">Sign Up</Link>
               </>
             )}
           </div>
@@ -86,4 +109,3 @@ const Mainnavbar = () => {
 };
 
 export default Mainnavbar;
-  
