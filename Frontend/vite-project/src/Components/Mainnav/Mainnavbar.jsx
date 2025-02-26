@@ -1,3 +1,4 @@
+// Frontend/vite-project/src/Components/Mainnav/Mainnavbar.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -74,7 +75,7 @@ const Mainnavbar = () => {
                 <Link to="/wishlist" onClick={() => setModalOpen(false)}>Wishlist</Link>
                 <Link to="/profile" onClick={() => setModalOpen(false)}>Edit Profile</Link>
                 <Link to="/your-reviews" onClick={() => setModalOpen(false)}>Your Reviews</Link>
-                <button onClick={() => { navigate("/create-listing"); setModalOpen(false); }}>
+                <button onClick={() => { navigate("/propertyform"); setModalOpen(false); }}>
                   Add a Property
                 </button>
                 <button className="logout-btn" onClick={handleLogout}>Logout</button>

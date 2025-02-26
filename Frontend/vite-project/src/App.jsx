@@ -11,8 +11,10 @@ import PropertyDetails from "./Components/PropertyDetails/PropertyDetails";
 import Register from "./Components/Register/Register";
 import Login from "./Components/Login/Login";
 import Listings from "./Components/Listing/Listings";
-import CreateListing from "./Components/CreateListing/CreateListing";
+
+import PropertyForm from "./Components/PropertyForm/PropertyForm";
 import Wishlist from "./Components/Wishlist/Wishlist"; // ✅ Import Wishlist page
+
 
 
 // import NotFound from "./Components/NotFound/NotFound"; // ✅ Handle 404 pages
@@ -36,6 +38,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        {/* <Route path="/propertyform" element={<PropertyForm />} /> */}
 
 
         
@@ -43,10 +46,10 @@ const App = () => {
 
         {/* 🔒 Protect Routes that Require Authentication */}
         <Route
-          path="/create-listing"
+          path="/propertyform"
           element={
             <ProtectedRoute>
-              <CreateListing />
+              <PropertyForm />
             </ProtectedRoute>
           }
         />
@@ -54,7 +57,7 @@ const App = () => {
           path="/edit-listing/:id"
           element={
             <ProtectedRoute>
-              <CreateListing />
+              <PropertyForm />
             </ProtectedRoute>
           }
         />
