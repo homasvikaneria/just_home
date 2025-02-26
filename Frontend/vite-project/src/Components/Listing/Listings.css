@@ -1,3 +1,4 @@
+/* Frontend/vite-project/src/Components/Listing/Listings.css */
 
 .listings-container {
     max-width: 1200px;
@@ -70,4 +71,22 @@
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
   }
-  
+ .category{
+  font-size: 25px;
+  color: black;
+  margin-left: -68px;
+ }
+ .Select{
+
+  font-size: 25px;
+  font-weight: 600;
+  margin-left: -55px;
+ }
+ .heading{
+  font-size: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: underline;
+  margin: 0px 0px 15px 0px;
+ }
