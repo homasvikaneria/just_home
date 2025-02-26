@@ -31,7 +31,7 @@ const Listings = ({ onSelectCategory }) => {
           </div>
         ))}
       </div>
-      {selectedCategory && <p className="category">Cateory: {selectedCategory}</p>}
+      {selectedCategory && <p className="categor">Cateory: {selectedCategory}</p>}
     </section>
   );
 };

@@ -11,7 +11,7 @@ import PropertyDetails from "./Components/PropertyDetails/PropertyDetails";
 import Register from "./Components/Register/Register";
 import Login from "./Components/Login/Login";
 import Listings from "./Components/Listing/Listings";
-
+import EditProfile from "./Components/Profile/Profile"; 
 import PropertyForm from "./Components/PropertyForm/PropertyForm";
 import Wishlist from "./Components/Wishlist/Wishlist"; // ✅ Import Wishlist page
 
@@ -38,6 +38,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/profile" element={<EditProfile />} />
         {/* <Route path="/propertyform" element={<PropertyForm />} /> */}
 
 

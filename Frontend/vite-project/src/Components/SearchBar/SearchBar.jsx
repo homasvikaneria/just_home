@@ -14,7 +14,7 @@ function SearchBar() {
     };
 
     return (
-        <div className="search-bar" style={{ paddingTop: "100px" }}>
+        <div className="search-bar" style={{ margin: "100px 0px -50px 390px",border:"2px solid #1b4f5c" }}>
             <input
                 type="text"
                 placeholder="What type of property are you looking for?"

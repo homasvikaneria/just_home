@@ -1,7 +1,10 @@
+// Frontend/vite-project/src/Components/Wishlist/Wishlist.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "../SearchResults/SearchResults.css";
+import Mainnavbar from "../Mainnav/Mainnavbar";
+import "./Wishlist.css"
 
 const Wishlist = () => {
     const navigate = useNavigate();
@@ -67,6 +70,7 @@ const Wishlist = () => {
     };
 
     return (
+        <div>      <Mainnavbar/>
         <div className="findhomes-wrapper">
             <h2 className="findhomes-heading">Your Wishlist</h2>
             {loading ? (
@@ -108,8 +112,9 @@ const Wishlist = () => {
                     ))}
                 </div>
             ) : (
-                <p className="findhomes-no-results">Your wishlist is empty.</p>
+                <p className="findhomes-no-results">OPPS! Your wishlist is empty.</p>
             )}
+        </div>
         </div>
     );
 };
