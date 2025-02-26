@@ -1,67 +1,43 @@
-// Frontend/vite-project/src/Components/Mainnav/Mainnavbar.jsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "./mainnavbar.css";
 import { setLogout } from "../../redux/state";
-import { persistor } from "../../redux/store"; // ✅ Import persistor
+import { persistor } from "../../redux/store";
 
 const Mainnavbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null); // 🔹 Reference for dropdown menu
+  const [modalOpen, setModalOpen] = useState(false);
 
-  // ✅ Ensure accessing the user object properly from Redux state
+  // Get user state
   const user = useSelector((state) => state.user?.user);
-  const isLoggedIn = user !== null; // ✅ Fix login detection
+  const isLoggedIn = user !== null;
 
   const defaultUserIcon =
     "https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129700/ytuunnzhvinksaxocspm.png";
   const userIconUrl = user?.profileImage || defaultUserIcon;
-  const userName = user?.name || "User"; // ✅ Now correctly displays name
+  const userName = user?.name || "User";
 
-  // ✅ Handle Logout
+  // Logout function
   const handleLogout = () => {
-    dispatch(setLogout()); // ✅ Reset Redux state
-    persistor.purge(); // ✅ Clear persisted Redux state
-    persistor.flush(); // ✅ Immediately apply purge
-    localStorage.clear(); // ✅ Remove user/token
+    dispatch(setLogout());
+    persistor.purge();
+    persistor.flush();
+    localStorage.clear();
     sessionStorage.clear();
-    setDropdownOpen(false);
+
+    setModalOpen(false);
     navigate("/");
 
-    // ✅ Force UI update after logout
     setTimeout(() => {
       window.location.reload();
     }, 100);
   };
 
-  // 🔹 Add Property function
-  const handleAddProperty = () => {
-    setDropdownOpen(false); // ✅ Close dropdown
-    navigate("/create-listing"); // ✅ Navigate to the Add Property page
-  };
-
-  // 🔹 Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
-    };
-
-    if (dropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [dropdownOpen]);
-
   return (
     <nav className="navbar">
+      {/* Left Section: Logo & Brand Name */}
       <div className="navbar-left" onClick={() => navigate("/")}>
         <img
           src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740129590/vscf21yryptnxlvzwoky.png"
@@ -71,6 +47,7 @@ const Mainnavbar = () => {
         <span className="brand-name">JustHome</span>
       </div>
 
+      {/* Navigation Links */}
       <div className="nav-links">
         <Link to="/">Home</Link>
         <Link to="/blog">Blog</Link>
@@ -78,33 +55,40 @@ const Mainnavbar = () => {
         <Link to="/contact">Contact</Link>
       </div>
 
-      {/* USER DROPDOWN MENU */}
-      <div className="user" ref={dropdownRef}>
-        <button className="user-button" onClick={() => setDropdownOpen(!dropdownOpen)}>
+      {/* User Profile Button */}
+      <div className="user">
+        <button className="user-button" onClick={() => setModalOpen(true)}>
           <img src={userIconUrl} alt="User Icon" className="user-icon" />
         </button>
+      </div>
 
-        {dropdownOpen && (
-          <div className="dropdown-menu">
+      {/* User Pop-up Modal */}
+      {modalOpen && (
+        <div className="modal-overlay" onClick={() => setModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <span className="close-btn" onClick={() => setModalOpen(false)}>✖</span>
+
             {isLoggedIn ? (
               <>
-                {/* 🔹 Show the user's name */}
-                <div className="dropdown-header">👤 {userName}</div>
-                <Link to="/wishlist">Wishlist</Link>
-                <Link to="/profile">Edit Profile</Link>
-                <Link to="/your-reviews">Your Reviews</Link>
-                <button onClick={handleAddProperty}>Add a Property</button>
-                <button onClick={handleLogout}>Logout</button>
+                <div className="modal-header">👤 {userName}</div>
+                <Link to="/wishlist" onClick={() => setModalOpen(false)}>Wishlist</Link>
+                <Link to="/profile" onClick={() => setModalOpen(false)}>Edit Profile</Link>
+                <Link to="/your-reviews" onClick={() => setModalOpen(false)}>Your Reviews</Link>
+                <button onClick={() => { navigate("/create-listing"); setModalOpen(false); }}>
+                  Add a Property
+                </button>
+                <button className="logout-btn" onClick={handleLogout}>Logout</button>
               </>
             ) : (
               <>
-                <Link to="/login">Sign In</Link>
-                <Link to="/register">Sign Up</Link>
+                <div className="modal-header">Welcome!</div>
+                <Link to="/login" onClick={() => setModalOpen(false)}>Sign In</Link>
+                <Link to="/register" onClick={() => setModalOpen(false)}>Sign Up</Link>
               </>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 };

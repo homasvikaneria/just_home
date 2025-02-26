@@ -1,166 +1,6 @@
-// // Frontend/vite-project/src/Components/Register/Register.jsx
-// import React, { useState } from "react";
-// import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
-// import { MdUpload } from "react-icons/md";
-
-// const Register = () => {
-//   const [formData, setFormData] = useState({
-//     firstName: "",
-//     lastName: "",
-//     email: "",
-//     password: "",
-//     confirmPassword: "",
-//     profileImage: null,
-//   });
-
-//   const navigate = useNavigate(); // Use for redirection
-
-//   // Handle input change
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   // Handle file upload
-//   const handleFileChange = (e) => {
-//     const file = e.target.files[0];
-//     if (file) {
-//       setFormData((prevData) => ({
-//         ...prevData,
-//         profileImage: file,
-//       }));
-//     }
-//   };
-
-//   // 🛠️ Submit Form and Send Data to Backend
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     // Validate password match
-//     if (formData.password !== formData.confirmPassword) {
-//       alert("Passwords do not match!");
-//       return;
-//     }
-
-//     // Create FormData for file upload
-//     const data = new FormData();
-//     data.append("firstName", formData.firstName);
-//     data.append("lastName", formData.lastName);
-//     data.append("email", formData.email);
-//     data.append("password", formData.password);
-//     if (formData.profileImage) {
-//       data.append("profileImage", formData.profileImage);
-//     }
-
-//     try {
-//       const response = await fetch("http://localhost:8000/users/register", {
-//         method: "POST",
-//         body: data, // Send form data
-//       });
-
-//       const result = await response.json();
-//       console.log("Response:", result);
-
-//       if (response.ok) {
-//         alert("Registration Successful!");
-//         navigate("/login"); // Redirect to login page
-//       } else {
-//         alert(result.message || "Registration Failed");
-//       }
-//     } catch (error) {
-//       console.error("Error:", error);
-//       alert("Something went wrong, please try again.");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <div>
-//         <form onSubmit={handleSubmit}>
-//           <div>
-//             <h4>Sign Up</h4>
-//           </div>
-
-//           <input
-//             type="text"
-//             name="firstName"
-//             placeholder="First Name"
-//             value={formData.firstName}
-//             required
-//             onChange={handleChange}
-//           />
-//           <input
-//             type="text"
-//             name="lastName"
-//             placeholder="Last Name"
-//             value={formData.lastName}
-//             required
-//             onChange={handleChange}
-//           />
-//           <input
-//             type="email"
-//             name="email"
-//             placeholder="Email Address"
-//             value={formData.email}
-//             required
-//             onChange={handleChange}
-//           />
-//           <input
-//             type="password"
-//             name="password"
-//             placeholder="Password"
-//             value={formData.password}
-//             required
-//             onChange={handleChange}
-//           />
-//           <input
-//             type="password"
-//             name="confirmPassword"
-//             placeholder="Confirm Password"
-//             value={formData.confirmPassword}
-//             required
-//             onChange={handleChange}
-//           />
-
-//           {/* File Upload */}
-//           <input
-//             type="file"
-//             id="image"
-//             name="profileImage"
-//             accept="image/*"
-//             hidden
-//             onChange={handleFileChange}
-//           />
-//           <label htmlFor="image">
-//             <div>
-//               {formData.profileImage ? (
-//                 <img
-//                   src={URL.createObjectURL(formData.profileImage)}
-//                   alt="profileImg"
-//                   style={{ width: "50px", height: "50px", objectFit: "cover" }}
-//                 />
-//               ) : (
-//                 <MdUpload size={50} />
-//               )}
-//             </div>
-//           </label>
-
-//           <button type="submit" className="btn-secondary rounded mt-2">
-//             Register
-//           </button>
-
-//           <div>
-//             Already have an account? <Link to="/login">Login</Link>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Register;
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Grid, Paper, TextField, Button, Typography, Avatar, IconButton } from "@mui/material";
 import { MdUpload } from "react-icons/md";
 
 const Register = () => {
@@ -173,18 +13,15 @@ const Register = () => {
     profileImage: null,
   });
 
-  const [imagePreview, setImagePreview] = useState(null); // ✅ Image preview state
-  const [error, setError] = useState(""); // ✅ Error message state
-  const [isLoading, setIsLoading] = useState(false); // ✅ Loading state
-
+  const [imagePreview, setImagePreview] = useState(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle file upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -192,24 +29,16 @@ const Register = () => {
         ...prevData,
         profileImage: file,
       }));
-      setImagePreview(URL.createObjectURL(file)); // ✅ Create preview
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
-  // 🛠️ Submit Form and Send Data to Backend
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // ✅ Reset previous errors
-    setIsLoading(true); // ✅ Set loading state
+    setError("");
+    setIsLoading(true);
 
-    // 🚨 Client-side validation
-    if (
-      !formData.name ||
-      !formData.surname ||
-      !formData.email ||
-      !formData.password ||
-      !formData.confirmPassword
-    ) {
+    if (!formData.name || !formData.surname || !formData.email || !formData.password || !formData.confirmPassword) {
       setError("All fields are required!");
       setIsLoading(false);
       return;
@@ -237,8 +66,6 @@ const Register = () => {
       });
 
       const result = await response.json();
-      console.log("Response:", result);
-
       if (response.ok) {
         alert("Registration Successful!");
         navigate("/login");
@@ -246,101 +73,79 @@ const Register = () => {
         setError(result.message || "Registration Failed");
       }
     } catch (error) {
-      console.error("Error:", error);
       setError("Something went wrong, please try again.");
     } finally {
-      setIsLoading(false); // ✅ Reset loading state
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="padding" style={{ padding: "80px" }}>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <h4>Sign Up</h4>
-        </div>
+    <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
+      <Paper elevation={10} style={{ padding: 30, width: 400, borderRadius: 10 }}>
+        <Grid align="center">
+          <Typography variant="h5" gutterBottom>
+            Sign Up
+          </Typography>
+        </Grid>
 
-        {error && <p style={{ color: "red" }}>{error}</p>} {/* ✅ Show errors */}
+        {error && <Typography color="error" align="center">{error}</Typography>}
 
-        <input
-          type="text"
-          name="name"
-          placeholder="First Name"
-          value={formData.name}
-          required
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="surname"
-          placeholder="Last Name"
-          value={formData.surname}
-          required
-          onChange={handleChange}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          value={formData.email}
-          required
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          required
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          required
-          onChange={handleChange}
-        />
+        <form onSubmit={handleSubmit}>
+          {/* Name and Surname Side by Side */}
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField label="First Name" name="name" fullWidth required value={formData.name} onChange={handleChange} />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField label="Last Name" name="surname" fullWidth required value={formData.surname} onChange={handleChange} />
+            </Grid>
+          </Grid>
 
-        {/* File Upload */}
-        <input
-          type="file"
-          id="image"
-          name="profileImage"
-          accept="image/*"
-          hidden
-          onChange={handleFileChange}
-        />
-        <label htmlFor="image">
-          <div style={{ cursor: "pointer", margin: "10px 0" }}>
-            {imagePreview ? (
-              <img
-                src={imagePreview}
-                alt="profile"
-                style={{
-                  width: "60px",
-                  height: "60px",
-                  objectFit: "cover",
+          <TextField label="Email" name="email" fullWidth required margin="normal" value={formData.email} onChange={handleChange} />
+          <TextField label="Password" name="password" type="password" fullWidth required margin="normal" value={formData.password} onChange={handleChange} />
+          <TextField label="Confirm Password" name="confirmPassword" type="password" fullWidth required margin="normal" value={formData.confirmPassword} onChange={handleChange} />
+
+          {/* Profile Image Upload */}
+          <Grid container direction="column" alignItems="center" style={{ marginTop: 15 }}>
+            <input type="file" id="image" name="profileImage" accept="image/*" hidden onChange={handleFileChange} />
+            <label htmlFor="image">
+              <IconButton
+                component="span"
+                sx={{
+                  width: 100,
+                  height: 100,
                   borderRadius: "50%",
-                  border: "2px solid #ccc",
+                  overflow: "hidden",
+                  border: "2px dashed #aaa",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "0.3s",
+                  "&:hover": { backgroundColor: "#f0f0f0" },
                 }}
-              />
-            ) : (
-              <MdUpload size={50} />
-            )}
-          </div>
-        </label>
+              >
+                {imagePreview ? (
+                  <Avatar src={imagePreview} sx={{ width: "100%", height: "100%" }} />
+                ) : (
+                  <MdUpload size={40} color="#888" />
+                )}
+              </IconButton>
+            </label>
+            <Typography variant="caption" color="textSecondary" sx={{ marginTop: 1 }}>
+              {imagePreview ? "Change Image" : "Upload Profile Picture"}
+            </Typography>
+          </Grid>
 
-        <button type="submit" disabled={isLoading} className="btn-secondary rounded mt-2">
-          {isLoading ? "Registering..." : "Register"} {/* ✅ Show loading state */}
-        </button>
+          <Button type="submit" color="primary" variant="contained" fullWidth style={{ marginTop: 20 }} disabled={isLoading}>
+            {isLoading ? "Registering..." : "Register"}
+          </Button>
+        </form>
 
-        <div>
+        <Typography align="center" style={{ marginTop: 10 }}>
           Already have an account? <Link to="/login">Login</Link>
-        </div>
-      </form>
-    </div>
+        </Typography>
+      </Paper>
+    </Grid>
   );
 };
 

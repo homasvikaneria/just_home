@@ -14,6 +14,7 @@ import Listings from "./Components/Listing/Listings";
 import CreateListing from "./Components/CreateListing/CreateListing";
 import Wishlist from "./Components/Wishlist/Wishlist"; // ✅ Import Wishlist page
 
+
 // import NotFound from "./Components/NotFound/NotFound"; // ✅ Handle 404 pages
 
 // 🔒 Protected Route Component
@@ -25,7 +26,7 @@ const ProtectedRoute = ({ children }) => {
 const App = () => {
   return (
     <Router>
-      <Mainnavbar />
+      {/* <Mainnavbar /> */}
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/homepage" element={<HomePage />} />
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/wishlist" element={<Wishlist />} />
+
 
         
 
@@ -60,7 +62,7 @@ const App = () => {
         {/* Handle Unknown Routes */}
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
-      <Footer />
+      {/* <Footer /> */}
     </Router>
   );
 };
