@@ -99,7 +99,7 @@ const Login = () => {
         <Typography align="center" style={{ marginTop: 5 }}>
           Don't have an account? <Link to="/register">Sign Up</Link>
         </Typography>
-      </Paper>git commit 
+      </Paper>
     </Grid>
   );
 };
