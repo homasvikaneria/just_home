@@ -3,19 +3,22 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin } from "../../redux/state";
+import { Grid, Paper, TextField, Button, Typography, Checkbox, FormControlLabel, IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-function Login() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // ✅ Track error messages
-  const [isLoading, setIsLoading] = useState(false); // ✅ Track loading state
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // ✅ Clear previous errors
-    setIsLoading(true); // ✅ Show loading state
+    setError("");
+    setIsLoading(true);
 
     try {
       const response = await fetch("http://localhost:8000/users/login", {
@@ -29,54 +32,77 @@ function Login() {
       }
 
       const loggedIn = await response.json();
-      console.log("✅ Login successful:", loggedIn); // Debug log
 
       if (loggedIn?.user && loggedIn?.token) {
         dispatch(setLogin({ user: loggedIn.user, token: loggedIn.token }));
-
-        console.log("🔀 Navigating to home page...");
         navigate("/");
       }
     } catch (err) {
-      console.error("❌ Login failed:", err.message);
-      setError(err.message); // ✅ Show error message to the user
+      setError(err.message);
     } finally {
-      setIsLoading(false); // ✅ Reset loading state
+      setIsLoading(false);
     }
   };
 
+  const handleClickShowPassword = () => setShowPassword((prev) => !prev);
+
+  const paperStyle = { padding: 30, height: "auto", width: 400, borderRadius: 10 };
+  const btnstyle = { margin: "16px 0", padding: "10px" };
+  const gridContainerStyle = { height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" };
+
   return (
-    <div className="login" style={{ padding: "80px" }}>
-      <form onSubmit={handleSubmit}>
-        <h4>Login</h4>
-
-        {error && <p style={{ color: "red" }}>{error}</p>} {/* ✅ Show errors */}
-
-        <input
-          onChange={(e) => setEmail(e.target.value)}
-          type="email"
-          value={email}
-          placeholder="Email Address"
-          required
-        />
-        <input
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
-          value={password}
-          placeholder="Password"
-          required
-        />
-        
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "Logging in..." : "Login"} {/* ✅ Show loading state */}
-        </button>
-
-        <div>
-          Don't have an account? <Link to="/register">Register</Link>
-        </div>
-      </form>
-    </div>
+    <Grid container style={gridContainerStyle}>
+      <Paper elevation={10} style={paperStyle}>
+        <Grid align="center">
+          <Typography variant="h5" gutterBottom>
+            Sign In
+          </Typography>
+        </Grid>
+        {error && <Typography color="error" align="center">{error}</Typography>}
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Email"
+            placeholder="Enter email"
+            fullWidth
+            required
+            margin="normal"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            label="Password"
+            placeholder="Enter password"
+            type={showPassword ? "text" : "password"}
+            fullWidth
+            required
+            margin="normal"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleClickShowPassword} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <FormControlLabel control={<Checkbox color="primary" />} label="Remember me" style={{ marginTop: 10 }} />
+          <Button type="submit" color="primary" variant="contained" style={btnstyle} fullWidth disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Sign in"}
+          </Button>
+        </form>
+        <Typography align="center" style={{ marginTop: 10 }}>
+          <Link to="/forgot-password">Forgot password?</Link>
+        </Typography>
+        <Typography align="center" style={{ marginTop: 5 }}>
+          Don't have an account? <Link to="/register">Sign Up</Link>
+        </Typography>
+      </Paper>git commit 
+    </Grid>
   );
-}
+};
 
 export default Login;
+
