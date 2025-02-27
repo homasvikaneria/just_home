@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./SearchResults.css";
 import SearchBar from "../SearchBar/SearchBar";
-import Listings from "../Listing/Listings";
+import Mainnavbar from "../Mainnav/Mainnavbar";
 
 const SearchResults = () => {
   const location = useLocation();
@@ -96,6 +96,7 @@ const SearchResults = () => {
 
   return (
     <div>
+      <Mainnavbar/>
       <SearchBar />
       {searchQuery && (
         <div className="findhomes-wrapper">
@@ -145,7 +146,7 @@ const SearchResults = () => {
           )}
         </div>
       )}
-      <Listings />
+
     </div>
   );
 };

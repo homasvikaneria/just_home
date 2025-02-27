@@ -71,7 +71,7 @@
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
   }
- .category{
+ .categor{
   font-size: 25px;
   color: black;
   margin-left: -68px;
