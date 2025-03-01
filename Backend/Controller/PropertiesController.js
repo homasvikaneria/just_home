@@ -1,169 +1,159 @@
-// just_home/Backend/Controller/PropertiesController.js
-import { Property } from '../Model/Properties.Model.js';
+// Backend/Controller/PropertiesController.js
+import {Property} from "../Model/Properties.Model.js";
 
-// GET /properties: Fetch all properties with optional search query
+// Create a new property
+export const createProperty = async (req, res) => {
+  try {
+    const { selectedCategory, address, essentialInfo, selectedFeatures, charmInfo, owner } = req.body;
+
+    // Validate required fields
+    if (!selectedCategory || !address.street || !charmInfo.title || !charmInfo.description) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // // Assuming photos are uploaded and URLs are generated
+    const photos = req.files?.map(file => file.path); // Replace with actual logic for generating URLs
+
+    const property = new Property({
+      selectedCategory,
+      address,
+      essentialInfo,
+      selectedFeatures,
+      photos,
+      charmInfo,
+      owner,
+    });
+
+    await property.save();
+    res.status(201).json(property);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get all properties
 export const getAllProperties = async (req, res) => {
-    try {
-        const { search } = req.query; // Get search query from request
-
-        let query = {}; // Default query (fetch all properties)
-
-        if (search) {
-            // Search across multiple fields (title, location, category, etc.)
-            query = {
-                $or: [
-                    { title: { $regex: search, $options: 'i' } },
-                    { location: { $regex: search, $options: 'i' } },
-                    { state: { $regex: search, $options: 'i' } },
-                    { category: { $regex: search, $options: 'i' } },
-                    { propertyType: { $regex: search, $options: 'i' } },
-                    { facilities: { $regex: search, $options: 'i' } },
-                ]
-            };
-        }
-
-        const propertiesList = await Property.find(query);
-
-        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No properties found.");
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
+  try {
+    const properties = await Property.find();
+    res.status(200).json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-
-export const getPropertyById = async (req, res) => {
-    const { id } = req.params;
-
-    if (!id) {
-        return res.status(400).json({ error: "Property ID is required" });
-    }
-
-    try {
-        const property = await Property.findById(id);
-        if (!property) {
-            return res.status(404).json({ message: "Property not found." });
-        }
-
-        res.status(200).json(property);
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
-};
-
-
-
-
-// GET /properties/city/:cityName - Fetch properties by city
+// Get properties by city
 export const getPropertiesByCity = async (req, res) => {
-    const cityName = req.params.cityName;
-    try {
-        const propertiesList = await Property.find({ location: { $regex: cityName, $options: 'i' } });
-        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No properties found in this city.");
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
+  try {
+    const { city } = req.params;
+    const properties = await Property.find({ "address.city": { $regex: city, $options: "i" } });
+    res.status(200).json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// GET /properties/state/:stateName - Fetch properties by state
+// Get properties by state
 export const getPropertiesByState = async (req, res) => {
-    const stateName = req.params.stateName;
-    try {
-        const propertiesList = await Property.find({ state: { $regex: stateName, $options: 'i' } });
-        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No properties found in this state.");
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
+  try {
+    const { state } = req.params;
+    const properties = await Property.find({ "address.state": { $regex: state, $options: "i" } });
+    res.status(200).json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// GET /properties/category/:categoryName - Fetch properties by category
-export const getPropertiesByCategory = async (req, res) => {
-    const categoryName = req.params.categoryName;
-    try {
-        const propertiesList = await Property.find({ category: { $regex: categoryName, $options: 'i' } });
-        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No properties found in this category.");
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
-};
-
-// GET /properties/rating - Fetch properties by minimum rating
-export const getPropertiesByRating = async (req, res) => {
-    const { minRating } = req.query;
-    try {
-        const propertiesList = await Property.find({ overallRating: { $gte: parseFloat(minRating) } });
-        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No properties found with this rating.");
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
-};
-
-// GET /properties/landmark/:landmark - Fetch properties by nearby landmark
+// Get properties by landmark
 export const getPropertiesByLandmark = async (req, res) => {
-    const landmark = req.params.landmark;
-    try {
-        const propertiesList = await Property.find({ nearbyLandmarks: { $regex: landmark, $options: 'i' } });
-        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No properties found near this landmark.");
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
+  try {
+    const { landmark } = req.params;
+    const properties = await Property.find({ "address.landmark": { $regex: landmark, $options: "i" } });
+    res.status(200).json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// GET /properties/pet-friendly/:petFriendly - Fetch pet-friendly properties
-export const getPetFriendlyProperties = async (req, res) => {
-    const petFriendly = req.params.petFriendly === 'true';
-    try {
-        const propertiesList = await Property.find({ petFriendly });
-        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No pet-friendly properties found.");
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
+// Get properties by listing type (rent/sale)
+export const getPropertiesByListingType = async (req, res) => {
+  try {
+    const { type } = req.params;
+    const properties = await Property.find({ "charmInfo.listingType": type });
+    res.status(200).json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// GET /properties/bedrooms/:number - Fetch properties by number of bedrooms
-export const getPropertiesByBedrooms = async (req, res) => {
-    const numberOfBedrooms = parseInt(req.params.number);
-    try {
-        const propertiesList = await Property.find({ bedrooms: numberOfBedrooms });
-        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No properties found with this number of bedrooms.");
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
-};
-
-// GET /properties/status/:status - Fetch properties by status (For Rent/Sale)
-export const getPropertiesByStatus = async (req, res) => {
-    const status = req.params.status;
-    try {
-        const propertiesList = await Property.find({ status: { $regex: status, $options: 'i' } });
-        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No properties found with this status.");
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
-};
-
-// GET /properties/price - Fetch properties within price range
-export const getPropertiesByPrice = async (req, res) => {
+// Get properties by price range
+export const getPropertiesByPriceRange = async (req, res) => {
+  try {
     const { minPrice, maxPrice } = req.query;
-    try {
-        const propertiesList = await Property.find({
-            price: { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) }
-        });
-        res.status(propertiesList.length ? 200 : 404).json(propertiesList.length ? propertiesList : "No properties found in this price range.");
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
+    const filter = { "charmInfo.price": {} };
+
+    if (minPrice) filter["charmInfo.price"].$gte = Number(minPrice);
+    if (maxPrice) filter["charmInfo.price"].$lte = Number(maxPrice);
+
+    const properties = await Property.find(filter);
+    res.status(200).json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// POST /properties: Add a new property
-export const addProperty = async (req, res) => {
-    try {
-        const newProperty = new Property(req.body);
-        const savedProperty = await newProperty.save();
-        res.status(201).json({
-            message: "Property added successfully",
-            propertyId: savedProperty._id
-        });
-    } catch (err) {
-        res.status(500).json({ error: "Internal server error", details: err.message });
-    }
+// Get properties by selected category
+export const getPropertiesByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const properties = await Property.find({ selectedCategory: category });
+    res.status(200).json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get properties by selected features
+export const getPropertiesByFeatures = async (req, res) => {
+  try {
+    const { features } = req.query;
+    const featuresArray = features.split(","); // Convert query string to array
+    const properties = await Property.find({ selectedFeatures: { $all: featuresArray } });
+    res.status(200).json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get a property by ID
+export const getPropertyById = async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+    if (!property) return res.status(404).json({ message: "Property not found" });
+    res.status(200).json(property);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update property
+export const updateProperty = async (req, res) => {
+  try {
+    const updates = req.body;
+    const updatedProperty = await Property.findByIdAndUpdate(req.params.id, updates, { new: true });
+    if (!updatedProperty) return res.status(404).json({ message: "Property not found" });
+    res.status(200).json(updatedProperty);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Delete property
+export const deleteProperty = async (req, res) => {
+  try {
+    const deletedProperty = await Property.findByIdAndDelete(req.params.id);
+    if (!deletedProperty) return res.status(404).json({ message: "Property not found" });
+    res.status(200).json({ message: "Property deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
