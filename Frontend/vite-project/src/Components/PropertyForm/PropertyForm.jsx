@@ -1,363 +1,514 @@
 // Frontend/vite-project/src/Components/PropertyForm/PropertyForm.jsx
-import React, { useState } from "react";
-import {
-  Grid,
-  TextField,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  IconButton,
-} from "@mui/material";
-import { FaPaw, FaTree, FaWifi, FaBed, FaBath, FaCar, FaTv, FaFireExtinguisher, FaFirstAid, FaUtensils, FaBlender, FaFan, FaCamera, FaParking, FaKey, FaFire } from "react-icons/fa"; // Example icons
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import Listings from "../Listing/Listings"; // Import the Listings component
-import Mainnavbar from "../Mainnav/Mainnavbar";
+import React, { useState } from 'react';
+import axios from 'axios';
+import './PropertyForm.css'; // You'll need to create this CSS file
 
-const AddPropertyForm = () => {
-  // State for form fields
-  const [selectedCategory, setSelectedCategory] = useState(null); // State for selected category
-  const [address, setAddress] = useState({
-    street: "",
-    apartment: "",
-    landmark: "",
-    country: "",
-    city: "",
-    state: "",
-  });
-  const [essentialInfo, setEssentialInfo] = useState({
-    guests: 1,
-    bedrooms: 1,
-    bathrooms: 1,
-    beds: 1,
-  });
-  const [selectedFeatures, setSelectedFeatures] = useState([]);
-  const [photos, setPhotos] = useState([]);
-  const [charmInfo, setCharmInfo] = useState({
-    title: "",
-    description: "",
-    listingType: "rent",
-    price: "",
+const PropertyForm = () => {
+  const [formData, setFormData] = useState({
+    selectedCategory: '',
+    address: {
+      street: '',
+      apartment: '',
+      landmark: '',
+      country: '',
+      city: '',
+      state: '',
+    },
+    essentialInfo: {
+      guests: 1,
+      bedrooms: 1,
+      bathrooms: 1,
+      beds: 1,
+    },
+    selectedFeatures: [],
+    photos: [], // This will store photo URLs
+    charmInfo: {
+      title: '',
+      description: '',
+      listingType: 'rent',
+      price: 0,
+    },
+    owner: {
+      name: '',
+      phone: '',
+      email: '',
+    }
   });
 
-  // Handle category selection
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-  };
-
-  // Handle address change
-  const handleAddressChange = (event) => {
-    const { name, value } = event.target;
-    setAddress({ ...address, [name]: value });
-  };
-
-  // Handle essential info change (increment/decrement)
-  const handleEssentialInfoChange = (field, delta) => {
-    setEssentialInfo((prev) => ({
-      ...prev,
-      [field]: Math.max(1, prev[field] + delta), // Ensure value doesn't go below 1
-    }));
-  };
-
-  // Handle feature selection
-  const handleFeatureToggle = (feature) => {
-    setSelectedFeatures((prev) =>
-      prev.includes(feature)
-        ? prev.filter((f) => f !== feature)
-        : [...prev, feature]
-    );
-  };
-
-  // Handle photo upload
-  const handlePhotoUpload = (event) => {
-    setPhotos([...event.target.files]);
-  };
-
-  // Handle charm info change
-  const handleCharmInfoChange = (event) => {
-    const { name, value } = event.target;
-    setCharmInfo({ ...charmInfo, [name]: value });
-  };
-
-  // Handle form submission
-  const handleSubmit = () => {
-    const formData = {
-      selectedCategory,
-      address,
-      essentialInfo,
-      selectedFeatures,
-      photos,
-      charmInfo,
-    };
-    console.log("Form Data:", formData);
-    // Send formData to backend
-  };
-
-  // Property type options
-  const propertyTypes = [
-    {
-      label: "Whole Home",
-      description: "Enjoy complete privacy with the entire home to yourself.",
-    },
-    {
-      label: "Private Room",
-      description: "Relax in your own room while sharing common areas.",
-    },
-    {
-      label: "Guest Suite",
-      description: "Experience comfort in a private suite within a larger property.",
-    },
-    {
-      label: "Shared Apartment",
-      description: "Stay in a cozy apartment with shared facilities.",
-    },
-  ];
-
-  // Feature options
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const [photoFiles, setPhotoFiles] = useState([]);
+  
   const features = [
-    { icon: <FaPaw />, label: "Pet-Friendly Space" },
-    { icon: <FaTree />, label: "Lush Garden" },
-    { icon: <FaWifi />, label: "High-Speed Wifi" },
-    { icon: <FaBed />, label: "Luxury Bathtub" },
-    { icon: <FaBath />, label: "Premium Care Essentials" },
-    { icon: <FaCar />, label: "Complimentary Parking" },
-    { icon: <FaTv />, label: "Smart TV" },
-    { icon: <FaFireExtinguisher />, label: "Safety Fire Extinguisher" },
-    { icon: <FaFirstAid />, label: "Emergency First Aid Kit" },
-    { icon: <FaUtensils />, label: "Complete Cooking Set" },
-    { icon: <FaBlender />, label: "Large Refrigerator" },
-    { icon: <FaFan />, label: "Climate Control - AC" },
-    { icon: <FaCamera />, label: "Surveillance Cameras" },
-    { icon: <FaParking />, label: "Contactless Check-in" },
-    { icon: <FaKey />, label: "Private Terrace/Balcony" },
-    { icon: <FaFire />, label: "Campfire Experience" },
+    "Pet-Friendly Space", "Lush Garden", "Swimming Pool", "Mountain View",
+    "Ocean View", "Air Conditioning", "Heating", "Wi-Fi", "Parking",
+    "Washer/Dryer", "Kitchen", "Fireplace", "TV", "Gym", "Hot Tub"
   ];
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Handle nested objects
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setFormData({
+        ...formData,
+        [parent]: {
+          ...formData[parent],
+          [child]: value
+        }
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleNumberChange = (e) => {
+    const { name, value } = e.target;
+    const numValue = parseInt(value) || 0;
+    
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setFormData({
+        ...formData,
+        [parent]: {
+          ...formData[parent],
+          [child]: numValue
+        }
+      });
+    } else {
+      setFormData({ ...formData, [name]: numValue });
+    }
+  };
+
+  const handleFeatureToggle = (feature) => {
+    const updatedFeatures = [...formData.selectedFeatures];
+    
+    if (updatedFeatures.includes(feature)) {
+      // Remove if already selected
+      const index = updatedFeatures.indexOf(feature);
+      updatedFeatures.splice(index, 1);
+    } else {
+      // Add if not selected
+      updatedFeatures.push(feature);
+    }
+    
+    setFormData({ ...formData, selectedFeatures: updatedFeatures });
+  };
+
+  const handlePhotoChange = (e) => {
+    const files = Array.from(e.target.files);
+    setPhotoFiles([...photoFiles, ...files]);
+    
+    // This is a simplification. In a real app, you would upload these images to a storage service
+    // and then store the URLs. For now, we'll just store file names as placeholders.
+    const newPhotoUrls = files.map(file => URL.createObjectURL(file));
+    setFormData({
+      ...formData,
+      photos: [...formData.photos, ...newPhotoUrls]
+    });
+  };
+
+  const removePhoto = (index) => {
+    const updatedPhotos = [...formData.photos];
+    updatedPhotos.splice(index, 1);
+    
+    const updatedPhotoFiles = [...photoFiles];
+    updatedPhotoFiles.splice(index, 1);
+    
+    setFormData({ ...formData, photos: updatedPhotos });
+    setPhotoFiles(updatedPhotoFiles);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage({ text: '', type: '' });
+    
+    try {
+      // In a real application, you would upload the photos to a storage service here
+      // and replace the URLs in formData.photos with the actual URLs from the storage service
+
+      // Send data to the server
+      console.log(formData);
+      
+      const response = await axios.post('http://localhost:8000/properties', formData);
+      
+      setMessage({
+        text: 'Property listing created successfully!',
+        type: 'success'
+      });
+      
+      // Reset form
+      setFormData({
+        selectedCategory: '',
+        address: {
+          street: '',
+          apartment: '',
+          landmark: '',
+          country: '',
+          city: '',
+          state: '',
+        },
+        essentialInfo: {
+          guests: 1,
+          bedrooms: 1,
+          bathrooms: 1,
+          beds: 1,
+        },
+        selectedFeatures: [],
+        photos: [],
+        charmInfo: {
+          title: '',
+          description: '',
+          listingType: 'rent',
+          price: 0,
+        },
+        owner: {
+          name: '',
+          phone: '',
+          email: '',
+        }
+      });
+      setPhotoFiles([]);
+      
+    } catch (error) {
+      setMessage({
+        text: error.response?.data?.message || 'Something went wrong. Please try again.',
+        type: 'error'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div>
-      <Mainnavbar/>
-
-    <Grid container spacing={4} style={{ padding: "40px" }}>
-      {/* Listings Component on Top */}
-      <Grid item xs={12}>
-        <Listings onSelectCategory={handleCategorySelect} />
-      </Grid>
-
-      {/* Property Type and Address Side by Side */}
-      <Grid item xs={12} container spacing={4}>
-        {/* Property Type Section */}
-        <Grid item xs={6}>
-          <Typography variant="h5" sx={{ color: "text.primary", fontWeight: "bold" ,margin:"0px 0px 20px 0px"}}>
-            What is the type of your place?
-          </Typography>
-          <Grid container spacing={2}>
-            {propertyTypes.map((type) => (
-              <Grid item key={type.label} xs={12}>
-                <Card
-                  style={{
-                    cursor: "pointer",
-                    backgroundColor:
-                      selectedCategory === type.label ? "#e0e0e0" : "#fff",
-                    padding: "0px",
-                  }}
-                  onClick={() => handleCategorySelect(type.label)}
-                >
-                  <CardContent>
-                    <Typography variant="h6">{type.label}</Typography>
-                    <Typography variant="body2">{type.description}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Grid>
-
-        {/* Address Section */}
-        <Grid item xs={6}>
-          <Typography variant="h5" sx={{ color: "text.primary", fontWeight: "bold",margin:"0px 0px 20px 0px" }}>
-            What's the address of your place?
-          </Typography>
-          <TextField
-            fullWidth
-            label="Street Address"
-            name="street"
-            value={address.street}
-            onChange={handleAddressChange}
-            style={{ marginBottom: "10px" }}
-          />
-          <TextField
-            fullWidth
-            label="Apartment, Suite (opt)"
-            name="apartment"
-            value={address.apartment}
-            onChange={handleAddressChange}
-            style={{ marginBottom: "10px" }}
-          />
-          <TextField
-            fullWidth
-            label="Landmark"
-            name="landmark"
-            value={address.landmark}
-            onChange={handleAddressChange}
-            style={{ marginBottom: "10px" }}
-          />
-          <TextField
-            fullWidth
-            label="Country"
-            name="country"
-            value={address.country}
-            onChange={handleAddressChange}
-            style={{ marginBottom: "10px" }}
-          />
-          <TextField
-            fullWidth
-            label="City"
-            name="city"
-            value={address.city}
-            onChange={handleAddressChange}
-            style={{ marginBottom: "10px" }}
-          />
-          <TextField
-            fullWidth
-            label="State"
-            name="state"
-            value={address.state}
-            onChange={handleAddressChange}
-            style={{ marginBottom: "10px" }}
-          />
-        </Grid>
-      </Grid>
-
-      {/* Increment/Decrement Section */}
-      <Grid item xs={12}>
-        <Typography variant="h5" sx={{ color: "text.primary", fontWeight: "bold" , margin:"10px 0px 20px 0px" }}>
-          Provide some essential info about your place
-        </Typography>
-        <Grid container spacing={0.5}>
-          {["guests", "bedrooms", "bathrooms", "beds"].map((field) => (
-            <Grid item key={field} xs={3}>
-              <Typography variant="body1" style={{ marginBottom: "10px" }}>
-                {field.charAt(0).toUpperCase() + field.slice(1)}
-              </Typography>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <IconButton
-                  onClick={() => handleEssentialInfoChange(field, -1)}
-                  disabled={essentialInfo[field] <= 1} // Disable if value is 1
-                >
-                  <RemoveIcon />
-                </IconButton>
-                <Typography variant="body1" style={{ margin: "0 10px" }}>
-                  {essentialInfo[field]}
-                </Typography>
-                <IconButton onClick={() => handleEssentialInfoChange(field, 1)}>
-                  <AddIcon />
-                </IconButton>
+    <div className="property-form-container">
+      <h1>Create Property Listing</h1>
+      
+      {message.text && (
+        <div className={`message ${message.type}`}>
+          {message.text}
+        </div>
+      )}
+      
+      <form onSubmit={handleSubmit} className="property-form">
+        {/* Step 1: Property Category */}
+        <div className="form-section">
+          <h2>Property Category</h2>
+          <div className="form-group">
+            <label htmlFor="selectedCategory">Property Type</label>
+            <select
+              id="selectedCategory"
+              name="selectedCategory"
+              value={formData.selectedCategory}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select a category</option>
+              <option value="Whole Home">Whole Home</option>
+              <option value="Private Room">Private Room</option>
+              <option value="Shared Room">Shared Room</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Villa">Villa</option>
+              <option value="Condo">Condo</option>
+            </select>
+          </div>
+        </div>
+        
+        {/* Step 2: Property Address */}
+        <div className="form-section">
+          <h2>Property Address</h2>
+          <div className="form-group">
+            <label htmlFor="address.street">Street Address*</label>
+            <input
+              type="text"
+              id="address.street"
+              name="address.street"
+              value={formData.address.street}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="address.apartment">Apartment/Suite (optional)</label>
+            <input
+              type="text"
+              id="address.apartment"
+              name="address.apartment"
+              value={formData.address.apartment}
+              onChange={handleChange}
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="address.landmark">Landmark (optional)</label>
+            <input
+              type="text"
+              id="address.landmark"
+              name="address.landmark"
+              value={formData.address.landmark}
+              onChange={handleChange}
+            />
+          </div>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="address.country">Country*</label>
+              <input
+                type="text"
+                id="address.country"
+                name="address.country"
+                value={formData.address.country}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="address.city">City*</label>
+              <input
+                type="text"
+                id="address.city"
+                name="address.city"
+                value={formData.address.city}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="address.state">State/Province*</label>
+              <input
+                type="text"
+                id="address.state"
+                name="address.state"
+                value={formData.address.state}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Step 3: Essential Information */}
+        <div className="form-section">
+          <h2>Essential Information</h2>
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="essentialInfo.guests">Guests*</label>
+              <input
+                type="number"
+                id="essentialInfo.guests"
+                name="essentialInfo.guests"
+                min="1"
+                value={formData.essentialInfo.guests}
+                onChange={handleNumberChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="essentialInfo.bedrooms">Bedrooms*</label>
+              <input
+                type="number"
+                id="essentialInfo.bedrooms"
+                name="essentialInfo.bedrooms"
+                min="1"
+                value={formData.essentialInfo.bedrooms}
+                onChange={handleNumberChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="essentialInfo.bathrooms">Bathrooms*</label>
+              <input
+                type="number"
+                id="essentialInfo.bathrooms"
+                name="essentialInfo.bathrooms"
+                min="1"
+                value={formData.essentialInfo.bathrooms}
+                onChange={handleNumberChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="essentialInfo.beds">Beds*</label>
+              <input
+                type="number"
+                id="essentialInfo.beds"
+                name="essentialInfo.beds"
+                min="1"
+                value={formData.essentialInfo.beds}
+                onChange={handleNumberChange}
+                required
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Step 4: Features */}
+        <div className="form-section">
+          <h2>Property Features</h2>
+          <div className="features-container">
+            {features.map((feature) => (
+              <div className="feature-item" key={feature}>
+                <input
+                  type="checkbox"
+                  id={`feature-${feature}`}
+                  checked={formData.selectedFeatures.includes(feature)}
+                  onChange={() => handleFeatureToggle(feature)}
+                />
+                <label htmlFor={`feature-${feature}`}>{feature}</label>
               </div>
-            </Grid>
-          ))}
-        </Grid>
-      </Grid>
-
-      {/* Features Section */}
-      <Grid item xs={12}>
-        <Typography variant="h5" sx={{ color: "text.primary", fontWeight: "bold",margin:"10px 0px 20px 0px" }}>
-          Describe the features of your location
-        </Typography>
-        <Grid container spacing={1}>
-          {features.map((feature) => (
-            <Grid item key={feature.label} xs={2.4}>
-              <Card
-                style={{
-                  cursor: "pointer",
-                  backgroundColor: selectedFeatures.includes(feature.label)
-                    ? "#e0e0e0"
-                    : "#fff",
-                  padding: "5px 5px 5px 5px",
-                }}
-                onClick={() => handleFeatureToggle(feature.label)}
+            ))}
+          </div>
+        </div>
+        
+        {/* Step 5: Photos */}
+        <div className="form-section">
+          <h2>Property Photos</h2>
+          <div className="photo-upload">
+            <input
+              type="file"
+              id="photos"
+              accept="image/*"
+              multiple
+              onChange={handlePhotoChange}
+            />
+            <label htmlFor="photos" className="upload-button">Add Photos</label>
+          </div>
+          
+          {formData.photos.length > 0 && (
+            <div className="photo-preview-container">
+              {formData.photos.map((photo, index) => (
+                <div className="photo-preview" key={index}>
+                  <img src={photo} alt={`Property ${index + 1}`} />
+                  <button
+                    type="button"
+                    onClick={() => removePhoto(index)}
+                    className="remove-photo"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* Step 6: Charm Information */}
+        <div className="form-section">
+          <h2>Property Details</h2>
+          <div className="form-group">
+            <label htmlFor="charmInfo.title">Title*</label>
+            <input
+              type="text"
+              id="charmInfo.title"
+              name="charmInfo.title"
+              value={formData.charmInfo.title}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="charmInfo.description">Description*</label>
+            <textarea
+              id="charmInfo.description"
+              name="charmInfo.description"
+              value={formData.charmInfo.description}
+              onChange={handleChange}
+              rows="4"
+              required
+            ></textarea>
+          </div>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="charmInfo.listingType">Listing Type*</label>
+              <select
+                id="charmInfo.listingType"
+                name="charmInfo.listingType"
+                value={formData.charmInfo.listingType}
+                onChange={handleChange}
+                required
               >
-                <CardContent style={{ display: "flex", alignItems: "center" }}>
-                  {feature.icon}
-                  <Typography variant="body2" style={{ marginLeft: "10px", fontSize:"16px" , }}>
-                    {feature.label}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Grid>
-
-      {/* Photos Section */}
-      <Grid item xs={12}>
-        <Typography variant="h5" sx={{ color: "text.primary", fontWeight: "bold",margin:"10px 0px 20px 0px" }}>
-          Include images showcasing your property?
-        </Typography>
-        <input
-          type="file"
-          multiple
-          onChange={handlePhotoUpload}
-          style={{ marginTop: "10px" }}
-        />
-      </Grid>
-
-      {/* Charm and Excitement Section */}
-      <Grid item xs={12}>
-        <Typography variant="h5" sx={{ color: "text.primary", fontWeight: "bold" ,margin:"10px 0px 20px 0px"}}>
-          How would you characterize the charm and excitement of your property?
-        </Typography>
-        <TextField
-          fullWidth
-          label="Title"
-          name="title"
-          value={charmInfo.title}
-          onChange={handleCharmInfoChange}
-          style={{ marginBottom: "10px" }}
-        />
-        <TextField
-          fullWidth
-          multiline
-          rows={4}
-          label="Description"
-          name="description"
-          value={charmInfo.description}
-          onChange={handleCharmInfoChange}
-          style={{ marginBottom: "10px" }}
-        />
-        <RadioGroup
-          value={charmInfo.listingType}
-          onChange={(e) =>
-            setCharmInfo({ ...charmInfo, listingType: e.target.value })
-          }
-          row
-        >
-          <FormControlLabel value="rent" control={<Radio />} label="For Rent" />
-          <FormControlLabel value="sale" control={<Radio />} label="For Sale" />
-        </RadioGroup>
-        <TextField
-          fullWidth
-          label={charmInfo.listingType === "rent" ? "Price per Day" : "Price"}
-          name="price"
-          value={charmInfo.price}
-          onChange={handleCharmInfoChange}
-          style={{ marginBottom: "10px" }}
-        />
-      </Grid>
-
-      {/* Add Property Button */}
-      <Grid item xs={12}>
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
-          Add Property
-        </Button>
-      </Grid>
-    </Grid>
+                <option value="rent">For Rent</option>
+                <option value="sale">For Sale</option>
+              </select>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="charmInfo.price">
+                {formData.charmInfo.listingType === 'rent' ? 'Price per day*' : 'Sale Price*'}
+              </label>
+              <input
+                type="number"
+                id="charmInfo.price"
+                name="charmInfo.price"
+                value={formData.charmInfo.price}
+                onChange={handleNumberChange}
+                min="0"
+                required
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Step 7: Owner Information */}
+        <div className="form-section">
+          <h2>Owner Information</h2>
+          <div className="form-group">
+            <label htmlFor="owner.name">Name*</label>
+            <input
+              type="text"
+              id="owner.name"
+              name="owner.name"
+              value={formData.owner.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="owner.phone">Phone*</label>
+              <input
+                type="tel"
+                id="owner.phone"
+                name="owner.phone"
+                value={formData.owner.phone}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="owner.email">Email*</label>
+              <input
+                type="email"
+                id="owner.email"
+                name="owner.email"
+                value={formData.owner.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="form-actions">
+          <button type="submit" className="submit-button" disabled={isLoading}>
+            {isLoading ? 'Creating Listing...' : 'Create Listing'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
 
-
-export default AddPropertyForm;
+export default PropertyForm;
