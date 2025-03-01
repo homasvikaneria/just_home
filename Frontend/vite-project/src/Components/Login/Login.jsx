@@ -1,10 +1,21 @@
-// Frontend/vite-project/src/Components/Login/Login.jsx
+// just_home/Frontend/vite-project/src/Components/Login/Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin } from "../../redux/state";
-import { Grid, Paper, TextField, Button, Typography, Checkbox, FormControlLabel, IconButton, InputAdornment } from "@mui/material";
+import { FcGoogle } from "react-icons/fc";
+import {
+  Grid,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Divider,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import "./Login.css"; // Import CSS for styling
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -46,36 +57,42 @@ const Login = () => {
 
   const handleClickShowPassword = () => setShowPassword((prev) => !prev);
 
-  const paperStyle = { padding: 30, height: "auto", width: 400, borderRadius: 10 };
-  const btnstyle = { margin: "16px 0", padding: "10px" };
-  const gridContainerStyle = { height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" };
-
   return (
-    <Grid container style={gridContainerStyle}>
-      <Paper elevation={10} style={paperStyle}>
+    <Grid container className="login-container">
+      <Paper elevation={10} className="login-paper">
         <Grid align="center">
-          <Typography variant="h5" gutterBottom>
-            Sign In
+          <Typography variant="h5" className="login-title">
+            Login
           </Typography>
         </Grid>
-        {error && <Typography color="error" align="center">{error}</Typography>}
+
+        {/* Google Login Button */}
+        <div className="google-signup">
+          <FcGoogle className="google-icon" />
+          Login with Google
+        </div>
+
+        {/* OR Divider */}
+        <Divider className="divider">OR</Divider>
+
+        {/* Form */}
         <form onSubmit={handleSubmit}>
           <TextField
-            label="Email"
-            placeholder="Enter email"
+            label="Email Address"
             fullWidth
             required
             margin="normal"
+            className="login-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             label="Password"
-            placeholder="Enter password"
             type={showPassword ? "text" : "password"}
             fullWidth
             required
             margin="normal"
+            className="login-input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             InputProps={{
@@ -88,16 +105,22 @@ const Login = () => {
               ),
             }}
           />
-          <FormControlLabel control={<Checkbox color="primary" />} label="Remember me" style={{ marginTop: 10 }} />
-          <Button type="submit" color="primary" variant="contained" style={btnstyle} fullWidth disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Sign in"}
+
+          {/* Login Button */}
+          <Button
+            type="submit"
+            variant="outlined"
+            className="login-btn"
+            fullWidth
+            disabled={isLoading}
+          >
+            {isLoading ? "Logging in..." : "Login"}
           </Button>
         </form>
-        <Typography align="center" style={{ marginTop: 10 }}>
-          <Link to="/forgot-password">Forgot password?</Link>
-        </Typography>
-        <Typography align="center" style={{ marginTop: 5 }}>
-          Don't have an account? <Link to="/register">Sign Up</Link>
+
+        {/* Sign-up Link */}
+        <Typography align="center" className="login-footer">
+          Didn't have an account? <Link to="/register">Sign up</Link>
         </Typography>
       </Paper>
     </Grid>
@@ -105,4 +128,3 @@ const Login = () => {
 };
 
 export default Login;
-

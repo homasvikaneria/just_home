@@ -1,3 +1,4 @@
+// just_home/Backend/Controller/UsersController.js
 // Backend/Controller/UsersController.js
 import fs from "fs";
 import path from "path";
@@ -206,3 +207,33 @@ export const getWishlist = async (req, res) => {
       res.status(500).json({ message: "Server error" });
     }
   };
+
+  export const updateUserProfile = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { name, surname, email, password } = req.body;
+        let updateData = { name, surname, email };
+
+        // Hash new password if provided
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            updateData.password = await bcrypt.hash(password, salt);
+        }
+
+        // Handle profile image update
+        if (req.file) {
+            updateData.profileImagePath = req.file.filename;
+        }
+
+        const updatedUser = await Users.findByIdAndUpdate(userId, updateData, { new: true });
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        res.status(200).json({ message: "Profile updated successfully", user: updatedUser });
+    } catch (error) {
+        console.error("Profile update error:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};

@@ -1,7 +1,10 @@
+// just_home/Frontend/vite-project/src/Components/Register/Register.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Grid, Paper, TextField, Button, Typography, Avatar, IconButton } from "@mui/material";
+import { FcGoogle } from "react-icons/fc";
 import { MdUpload } from "react-icons/md";
+import "./Register.css";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -80,69 +83,59 @@ const Register = () => {
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
-      <Paper elevation={10} style={{ padding: 30, width: 400, borderRadius: 10 }}>
+    <Grid container className="register-container">
+      <Paper elevation={10} className="register-paper">
         <Grid align="center">
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h5" className="register-title">
             Sign Up
           </Typography>
         </Grid>
 
+        {/* Google Sign Up Button */}
+        <div className="google-signup">
+          <FcGoogle className="google-icon" />
+          Sign up with Google
+        </div>
+
+        {/* OR Divider */}
+        <div className="or-divider">OR</div>
+
         {error && <Typography color="error" align="center">{error}</Typography>}
 
         <form onSubmit={handleSubmit}>
-          {/* Name and Surname Side by Side */}
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <TextField label="First Name" name="name" fullWidth required value={formData.name} onChange={handleChange} />
+              <TextField label="First Name" name="name" fullWidth required value={formData.name} onChange={handleChange} className="register-input" />
             </Grid>
             <Grid item xs={6}>
-              <TextField label="Last Name" name="surname" fullWidth required value={formData.surname} onChange={handleChange} />
+              <TextField label="Last Name" name="surname" fullWidth required value={formData.surname} onChange={handleChange} className="register-input" />
             </Grid>
           </Grid>
 
-          <TextField label="Email" name="email" fullWidth required margin="normal" value={formData.email} onChange={handleChange} />
-          <TextField label="Password" name="password" type="password" fullWidth required margin="normal" value={formData.password} onChange={handleChange} />
-          <TextField label="Confirm Password" name="confirmPassword" type="password" fullWidth required margin="normal" value={formData.confirmPassword} onChange={handleChange} />
+          <TextField label="Email Address" name="email" fullWidth required margin="normal" value={formData.email} onChange={handleChange} className="register-input" />
+          <TextField label="Password" name="password" type="password" fullWidth required margin="normal" value={formData.password} onChange={handleChange} className="register-input" />
+          <TextField label="Confirm Password" name="confirmPassword" type="password" fullWidth required margin="normal" value={formData.confirmPassword} onChange={handleChange} className="register-input" />
 
           {/* Profile Image Upload */}
-          <Grid container direction="column" alignItems="center" style={{ marginTop: 15 }}>
+          <Grid container direction="column" alignItems="center" className="upload-container">
             <input type="file" id="image" name="profileImage" accept="image/*" hidden onChange={handleFileChange} />
             <label htmlFor="image">
-              <IconButton
-                component="span"
-                sx={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  border: "2px dashed #aaa",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "0.3s",
-                  "&:hover": { backgroundColor: "#f0f0f0" },
-                }}
-              >
-                {imagePreview ? (
-                  <Avatar src={imagePreview} sx={{ width: "100%", height: "100%" }} />
-                ) : (
-                  <MdUpload size={40} color="#888" />
-                )}
+              <IconButton component="span" className="upload-box">
+                {imagePreview ? <Avatar src={imagePreview} sx={{ width: "100%", height: "100%" }} /> : <MdUpload className="upload-icon" />}
               </IconButton>
             </label>
-            <Typography variant="caption" color="textSecondary" sx={{ marginTop: 1 }}>
+            <Typography variant="caption" className="upload-text">
               {imagePreview ? "Change Image" : "Upload Profile Picture"}
             </Typography>
           </Grid>
 
-          <Button type="submit" color="primary" variant="contained" fullWidth style={{ marginTop: 20 }} disabled={isLoading}>
-            {isLoading ? "Registering..." : "Register"}
+          <Button type="submit" className="register-btn" disabled={isLoading}>
+            {isLoading ? "Registering..." : "Sign Up"}
           </Button>
         </form>
 
-        <Typography align="center" style={{ marginTop: 10 }}>
-          Already have an account? <Link to="/login">Login</Link>
+<Typography align="center" className="login-footer">
+          Already have an account <Link to="/login">Sign up</Link>
         </Typography>
       </Paper>
     </Grid>
