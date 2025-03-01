@@ -4,6 +4,7 @@ import { Link  , useNavigate } from "react-router-dom";
 import Mainnavbar from "../Mainnav/Mainnavbar"
 import './LandingPage.css'
 import Newsletter from "../Newsletter/Newsletter";
+import Footer from "../Footer/Footer";
 
 
 
@@ -153,6 +154,7 @@ const LandingPage = () => {
 
 
             <Newsletter />
+            <Footer/>
 
         </div>
     );

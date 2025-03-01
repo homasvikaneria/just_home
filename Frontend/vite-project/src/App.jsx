@@ -14,6 +14,8 @@ import Listings from "./Components/Listing/Listings";
 import EditProfile from "./Components/Profile/Profile"; 
 import PropertyForm from "./Components/PropertyForm/PropertyForm";
 import Wishlist from "./Components/Wishlist/Wishlist"; // ✅ Import Wishlist page
+import ContactForm from "./Components/Contactus/Contactus";
+import BlogSection from "./Components/Blog/Blog";
 
 
 
@@ -39,7 +41,8 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/profile" element={<EditProfile />} />
-        {/* <Route path="/propertyform" element={<PropertyForm />} /> */}
+        <Route path="/contact" element={<ContactForm />} />
+        <Route path="/blog" element={<BlogSection />} />
 
 
         

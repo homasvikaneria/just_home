@@ -1,10 +1,13 @@
 // just_home/Frontend/vite-project/src/Components/HomePage/HomePage.jsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaHome, FaUserTie, FaKey  } from "react-icons/fa";
 import "./HomePage.css";
 import Mainnavbar from "../Mainnav/Mainnavbar";
+import Footer from "../Footer/Footer";
+import { categories } from "../../assets/data"; // Import the same categories
+
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -33,7 +36,7 @@ const HomePage = () => {
         const sortedProperties = response.data.sort((a, b) => b.overallRating - a.overallRating);
 
         // Get top 3 properties
-        setProperties(sortedProperties.slice(0, 3));
+        setProperties(sortedProperties.slice(0, 4));
       } catch (error) {
         console.error("Error fetching properties:", error);
       }
@@ -52,7 +55,7 @@ const HomePage = () => {
       <Mainnavbar />
 
       {/* Section: Find Properties in Cities */}
-      <div className="App">
+      {/* <div className="App">
         <section className="city-properties">
           <h1 className="heading1">Find Properties in These Cities</h1>
           <p className="just_below">Select a city to explore properties</p>
@@ -81,7 +84,7 @@ const HomePage = () => {
             </button>
           </div>
         </section>
-      </div>
+      </div> */}
 
 
 
@@ -107,29 +110,20 @@ const HomePage = () => {
 
           <h3 className="search-category-title">What are you looking for?</h3>
 
-          {/* Property Categories */}
           <div className="property-categories">
-            {[
-              { name: "Apartment", img: "YOUR_APARTMENT_IMAGE_URL" },
-              { name: "Villa", img: "YOUR_MODERN_VILLA_IMAGE_URL" },
-              { name: "Town House", img: "YOUR_TOWN_HOUSE_IMAGE_URL" },
-              { name: "PG's/Co-Living", img: "YOUR_CO_LIVING_IMAGE_URL" },
-              { name: "Wind Farm", img: "YOUR_WIND_FARM_IMAGE_URL" },
-              { name: "Desert Retreat", img: "YOUR_DESERT_RETREAT_IMAGE_URL" },
-              { name: "Private Island", img: "YOUR_PRIVATE_ISLAND_IMAGE_URL" },
-              { name: "Lake Side", img: "YOUR_LAKE_SIDE_IMAGE_URL" },
-              { name: "Luxury Pools", img: "YOUR_LUXURY_POOLS_IMAGE_URL" },
-            ].map((category) => (
-              <div
-                key={category.name}
-                className="category"
-                onClick={() => handleCategoryClick(category.name)}
-              >
-                <img src={category.img} alt={category.name} />
-                <span>{category.name}</span>
-              </div>
-            ))}
-          </div>
+  {categories.map((category) => (
+    <div
+      key={category.label}
+      className="category"
+      onClick={() => handleCategoryClick(category.label)}
+    >
+      <div className="category-icon" style={{ backgroundColor: category.color }}>
+        {category.icon} {/* Use the same icons from categories */}
+      </div>
+      <span>{category.label}</span>
+    </div>
+  ))}
+</div>
         </div>
       </div>
 
@@ -147,7 +141,7 @@ const HomePage = () => {
         <h2 className="section-title">Top Rated Properties</h2>
         <div className="properties-container">
           {properties.map((property) => (
-            <div key={property._id} className="property-card">
+            <Link key={property._id} to={`/property/${property._id}`} className="property-card">
               <img
                 src={property.coverimg || "https://source.unsplash.com/400x300/?house"}
                 alt={property.title}
@@ -160,7 +154,7 @@ const HomePage = () => {
                 <p><strong>Bedrooms:</strong> {property.bedrooms} | <strong>Bathrooms:</strong> {property.bathrooms}</p>
                 <p><strong>Overall Rating:</strong> ⭐ {property.overallRating}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
@@ -172,7 +166,7 @@ const HomePage = () => {
           <h2>Become a Real Estate Agent</h2>
           <p>Pellentesque egestas elementum egestas faucibus sem. Velit nunc egestas ut morbi. Leo diam diam.</p>
           <div className="cta-container">
-            <a href="/register-agent" className="register-btn">Register Now →</a>
+            <a href="/register-agent" className="register-btn1">Register Now →</a>
             <span className="contact-info">📞 +68 685 88666</span>
           </div>
         </div>
@@ -181,8 +175,41 @@ const HomePage = () => {
           <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740196542/gjtsz4xhmpfjb6vjllf1.png" alt="Real Estate Agent" className="agent-image" />
         </div>
       </section>
+      <div className="how-it-works">
+        <h2>How It Works? Find a perfect home</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
 
+        <div className="steps-container">
+          {/* Step 1 */}
+          <div className="step">
+            <div className="icon-circle">
+              <FaHome className="icon" />
+            </div>
+            <h3>Find Real Estate</h3>
+            <p>Sumo petentium ut per, at his wisi utinam adipiscing. Est ei graeco.</p>
+          </div>
 
+          {/* Step 2 */}
+          <div className="step">
+            <div className="icon-circle">
+              <FaUserTie className="icon" />
+            </div>
+            <h3>Meet Realtor</h3>
+            <p>Sumo petentium ut per, at his wisi utinam adipiscing. Est ei graeco.</p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="step">
+            <div className="icon-circle">
+              <FaKey className="icon" />
+            </div>
+            <h3>Take The Keys</h3>
+            <p>Sumo petentium ut per, at his wisi utinam adipiscing. Est ei graeco.</p>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
 
     </div>
   );

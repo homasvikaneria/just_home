@@ -59,7 +59,7 @@ const Newsletter = () => {
       </div>
 
       {/* Footer Section */}
-      <div className="footer">
+      <div className="footer1">
         <p className="footer-text">Copyright © 2024. JustHome</p>
 
 
