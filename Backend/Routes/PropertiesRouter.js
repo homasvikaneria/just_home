@@ -1,5 +1,5 @@
-// Backend/Routes/PropertiesRouter.js
 import express from "express";
+import multer from "multer";
 import {
   createProperty,
   getAllProperties,
@@ -15,42 +15,33 @@ import {
   deleteProperty,
 } from "../Controller/PropertiesController.js";
 
+// Initialize Express Router
 const PropertyRouter = express.Router();
 
-// Add new property
-PropertyRouter.post("/", createProperty);
+// Configure Multer for File Uploads
+const storage = multer.diskStorage({
+  destination: "./public/uploads", // Save files in this directory
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname); // Unique filename
+  },
+});
 
-// Get all properties
+const upload = multer({ storage });
+
+// Use upload middleware for property creation
+PropertyRouter.post("/", upload.array("photos", 5), createProperty); // Fix: Use upload **after** defining it
+
+// Other Routes
 PropertyRouter.get("/", getAllProperties);
-
-// Get properties by city
 PropertyRouter.get("/city/:city", getPropertiesByCity);
-
-// Get properties by state
 PropertyRouter.get("/state/:state", getPropertiesByState);
-
-// Get properties by landmark
 PropertyRouter.get("/landmark/:landmark", getPropertiesByLandmark);
-
-// Get properties by listing type (rent/sale)
 PropertyRouter.get("/listing-type/:type", getPropertiesByListingType);
-
-// Get properties by price range
 PropertyRouter.get("/price-range", getPropertiesByPriceRange);
-
-// Get properties by selected category
 PropertyRouter.get("/category/:category", getPropertiesByCategory);
-
-// Get properties by selected features
 PropertyRouter.get("/features", getPropertiesByFeatures);
-
-// Get property by ID
 PropertyRouter.get("/:id", getPropertyById);
-
-// Update property
-PropertyRouter.put("/:id", updateProperty);
-
-// Delete property
+PropertyRouter.put("/:id", upload.array("photos", 5), updateProperty);
 PropertyRouter.delete("/:id", deleteProperty);
 
 export default PropertyRouter;
