@@ -6,20 +6,19 @@ export const createProperty = async (req, res) => {
   try {
     const { selectedCategory, address, essentialInfo, selectedFeatures, charmInfo, owner } = req.body;
 
-    // Validate required fields
     if (!selectedCategory || !address.street || !charmInfo.title || !charmInfo.description) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // // Assuming photos are uploaded and URLs are generated
-    const photos = req.files?.map(file => file.path); // Replace with actual logic for generating URLs
+    // Check if files are uploaded and extract their paths
+    const photos = req.files?.map(file => `/uploads/${file.filename}`) || [];
 
     const property = new Property({
       selectedCategory,
       address,
       essentialInfo,
       selectedFeatures,
-      photos,
+      photos, // Store file URLs in DB
       charmInfo,
       owner,
     });

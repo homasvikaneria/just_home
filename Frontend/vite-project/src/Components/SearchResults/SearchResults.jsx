@@ -96,7 +96,7 @@ const SearchResults = () => {
 
   return (
     <div>
-      <Mainnavbar/>
+      <Mainnavbar />
       <SearchBar />
       {searchQuery && (
         <div className="findhomes-wrapper">
@@ -135,8 +135,11 @@ const SearchResults = () => {
                     </p>
                     <p className="findhomes-availability">{property.status}</p>
                     <p className="findhomes-summary">
-                      {property.description.length > 100 ? property.description.substring(0, 100) + "..." : property.description}
+                      {property.description && property.description.length > 100
+                        ? property.description.substring(0, 100) + "..."
+                        : property.description || "No description available"}
                     </p>
+
                   </div>
                 </div>
               ))}
