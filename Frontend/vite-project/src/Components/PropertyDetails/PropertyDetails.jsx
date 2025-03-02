@@ -32,6 +32,8 @@ const PropertyDetails = () => {
   if (loading) return <p className="loading">Loading property details...</p>;
   if (error || !property) return <p className="error">Property not found.</p>;
 
+  console.log("Owner Data:", property.owner); // Debugging Log
+
   return (
     <div>
       <Mainnavbar />
@@ -55,10 +57,14 @@ const PropertyDetails = () => {
 
           {/* Status Button */}
           <div className="property-status">
-            {property.status.toLowerCase() === "for sale" ? (
-              <button className="sale-button">For Sale</button>
+            {property.status && typeof property.status === "string" ? (
+              property.status.toLowerCase() === "for sale" ? (
+                <button className="sale-button">For Sale</button>
+              ) : (
+                <button className="rent-button">For Rent</button>
+              )
             ) : (
-              <button className="rent-button">For Rent</button>
+              <p className="error">Status not available</p>
             )}
           </div>
 
@@ -74,9 +80,9 @@ const PropertyDetails = () => {
 
           {/* Owner Information */}
           <div className="property-owner">
-            <h3><FaUser /> Owned by {property.owner}</h3>
-            <p><FaEnvelope /> {property.ownerEmail}</p>
-            <p><FaPhone /> {property.contact}</p>
+            <h3><FaUser /> Owned by {property.owner?.name}</h3>
+            <p><FaEnvelope /> {property.owner?.email}</p>
+            <p><FaPhone /> {property.owner?.phone}</p>
           </div>
 
           {/* Facilities Section */}
