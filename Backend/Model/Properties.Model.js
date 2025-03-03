@@ -3,7 +3,10 @@ import mongoose from "mongoose";
 
 const PropertySchema = new mongoose.Schema({
   // Selected Category
-  selectedCategory: { type: String, required: true }, // e.g., "Whole Home", "Private Room", etc.
+  selectedCategory: { type: String, required: true }, // e.g., "Whole Home", "Private Room"
+
+  // New Category Field
+  category: { type: String, required: true }, // e.g., "Apartment", "Villa", "Farmhouse"
 
   // Address
   address: {
@@ -17,27 +20,32 @@ const PropertySchema = new mongoose.Schema({
 
   // Essential Info
   essentialInfo: {
-    guests: { type: Number, required: true, min: 1 }, // Number of guests
-    bedrooms: { type: Number, required: true, min: 1 }, // Number of bedrooms
-    bathrooms: { type: Number, required: true, min: 1 }, // Number of bathrooms
-    beds: { type: Number, required: true, min: 1 }, // Number of beds
+    guests: { type: Number, required: true, min: 1 },
+    bedrooms: { type: Number, required: true, min: 1 },
+    bathrooms: { type: Number, required: true, min: 1 },
+    beds: { type: Number, required: true, min: 1 },
   },
 
   // Selected Features
-  selectedFeatures: [{ type: String }], // Array of selected features (e.g., "Pet-Friendly Space", "Lush Garden", etc.)
+  selectedFeatures: [{ type: String }], 
 
   // Photos
-  photos: [{ type: String }], // Array of photo URLs (after uploading to a storage service)
+  photos: [{ type: String }],
 
   // Charm Info
   charmInfo: {
-    title: { type: String, required: true }, // Property title
-    description: { type: String, required: true }, // Property description
-    listingType: { type: String, enum: ["rent", "sale"], required: true }, // Rent or Sale
-    price: { type: Number, required: true }, // Price (per day for rent or total for sale)
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    listingType: { type: String, enum: ["rent", "sale"], required: true },
+
+    // Updated Price Field (in INR)
+    price: {
+      amount: { type: Number, required: true },
+      currency: { type: String, default: "INR" }, // Default to Indian Rupees
+    },
   },
 
-  // Owner Info (if needed)
+  // Owner Info
   owner: {
     name: { type: String, required: true },
     phone: { type: String, required: true },
@@ -49,4 +57,3 @@ const PropertySchema = new mongoose.Schema({
 });
 
 export const Property = mongoose.model("Property", PropertySchema);
-
