@@ -2,14 +2,15 @@
 .filter-container {
   display: flex;
   align-items: center;
+  justify-content: center;
   background: #fff;
   border-radius: 15px;
   padding: 20px 15px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   gap: 9px;
-  max-width: 60%;
+  max-width: 80%;
   justify-content: space-around;
-  margin: 80px 0px 0px 265px;
+  margin: 80px 0px 0px 130px;
 }
 
 .filter-item {
@@ -81,4 +82,16 @@
 .search-btn :hover{
   background: #987b3b;
 
+}
+.price-filter {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+}
+
+.price-range-text {
+  font-size: 14px;
+  /* font-weight: bold; */
+  color: #303030;
+  margin-top: 5px;
 }
