@@ -1,7 +1,8 @@
+/* just_home/Frontend/vite-project/src/Components/SearchBar/SearchBar.css */
 .search-bar {
   display: flex;
   align-items: center;
-  width: 100%;  /* Make it responsive */
+  width: 1200px;  /* Make it responsive */
   max-width: 500px;  /* Keep a reasonable width */
   background: #fff;
   border-radius: 50px;
@@ -18,7 +19,7 @@
   font-size: 16px;
   padding: 10px;
   border-radius: 50px;
-  width: 95%; 
+  width: 80%; 
   background: transparent; /* Ensure background is clear */
 }
 
