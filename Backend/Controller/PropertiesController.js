@@ -1,3 +1,4 @@
+// just_home/Backend/Controller/PropertiesController.js
 // Backend/Controller/PropertiesController.js
 import {Property} from "../Model/Properties.Model.js";
 // import mongoose from "mongoose";
@@ -159,7 +160,7 @@ export const getPropertiesByListingType = async (req, res) => {
     const { type } = req.params;
     console.log("🔍 Searching for listingType:", type); // Debugging log
 
-    const properties = await Property.find({ "charmInfo.listingType": type });
+    const properties = await Property.find({ "charmInfo.listingType": { $regex: new RegExp(type, "i") }});
 
     if (properties.length === 0) {
       return res.status(404).json({ message: "No properties found for this listing type." });

@@ -1,3 +1,4 @@
+// just_home/Backend/Model/Properties.Model.js
 // Backend/Model/Properties.Model.js
 import mongoose from "mongoose";
 

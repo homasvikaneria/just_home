@@ -1,10 +1,10 @@
-// Backend/index.js
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import multer from 'multer';
 import path from 'path';
+import { fileURLToPath } from 'url'; // ⬅️ Import this to get __dirname
 
 // Import Routes
 import ContactusRouter from './Routes/ContactusRouter.js';
@@ -24,6 +24,10 @@ if (!MONGO_URI) {
     process.exit(1); // Stop the server if MongoDB URI is missing
 }
 
+// 🟢 Fix __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -31,7 +35,7 @@ app.use(express.json());
 // 🟢 Setup Multer for File Uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "public/uploads/"); // Ensure the folder exists
+        cb(null, path.join(__dirname, "public/uploads/")); // Ensure the folder exists
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname));
@@ -40,7 +44,7 @@ const storage = multer.diskStorage({
 export const upload = multer({ storage });
 
 // 🟢 Serve Static Files for Uploaded Images
-app.use("/uploads", express.static("public/uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads"))); // ✅ Corrected Path
 
 // Routes
 app.use("/contactus", ContactusRouter);

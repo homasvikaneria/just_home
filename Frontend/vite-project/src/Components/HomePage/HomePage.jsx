@@ -250,11 +250,11 @@ const HomePage = () => {
 
     fetchProperties();
   }, []);
+
   const navigate = useNavigate(); // Initialize navigation
 
-
   const handleFilterClick = (filterType) => {
-    navigate(`/search-results?filter=${filterType}`);
+    navigate(`/search-results?type=${filterType}`);
   };
 
   return (
