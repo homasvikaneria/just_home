@@ -162,7 +162,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./SearchResults.css";
-import SearchBar from "../SearchBar/SearchBar";
+import SearchFilter from "../SearchFilter/SearchFilter";
 import Mainnavbar from "../Mainnav/Mainnavbar";
 
 const SearchResults = () => {
@@ -209,6 +209,8 @@ const SearchResults = () => {
   return (
     <div>
       <Mainnavbar />
+      <SearchFilter />
+
       {listingType && (
         <div className="findhomes-wrapper">
           <h2 className="findhomes-heading">
