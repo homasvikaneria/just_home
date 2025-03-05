@@ -1,3 +1,4 @@
+/* just_home/Frontend/vite-project/src/Components/SearchResults/SearchResults.css */
 /* Frontend/vite-project/src/Components/SearchResults/SearchResults.css */
 /* Wrapper */
 .findhomes-wrapper {
@@ -136,3 +137,19 @@
     color: #777;
     margin-top: 20px;
 }
+.search-results-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .findhomes-wrapper {
+    flex: 1; /* Takes the remaining space */
+  }
+  
+  @media (max-width: 768px) {
+    .search-results-container {
+      flex-direction: column;
+    }
+  }
+  

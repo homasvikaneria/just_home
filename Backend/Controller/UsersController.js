@@ -126,31 +126,32 @@ export const updateWishlist = async (req, res) => {
     try {
         const { userId, propertyId } = req.params;
 
-        // Validate user
         const user = await Users.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
 
-        // Check if the property is already in the wishlist
-        const index = user.wishList.indexOf(propertyId);
+        const index = user.wishList.findIndex(id => id.toString() === propertyId);
         if (index === -1) {
-            user.wishList.push(propertyId); // ✅ Add to wishlist
+            user.wishList.push(propertyId);
         } else {
-            user.wishList.splice(index, 1); // ❌ Remove from wishlist (toggle)
+            user.wishList.splice(index, 1);
         }
 
         await user.save();
-        res.status(200).json({ message: "Wishlist updated", wishList: user.wishList });
+
+        // Return the updated wishlist
+        const updatedUser = await Users.findById(userId).populate("wishList");
+        res.status(200).json({ message: "Wishlist updated", wishList: updatedUser.wishList });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
 
 
-
 export const getUserWishlist = async (req, res) => {
     const { userId } = req.params;
+    console.log("🔍 Fetching wishlist for user:", userId); // Debugging
 
     try {
         const user = await Users.findById(userId).populate({
@@ -159,12 +160,14 @@ export const getUserWishlist = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(404).json({ wishList: [] }); // ✅ Always return an array
+            console.log("❌ User not found.");
+            return res.status(404).json({ wishList: [] });
         }
 
-        res.status(200).json({ wishList: user.wishList || [] }); // ✅ Ensure fallback array
+        console.log("✅ User wishlist:", user.wishList);
+        res.status(200).json({ wishList: user.wishList || [] });
     } catch (error) {
-        console.error("Error fetching wishlist:", error);
+        console.error("❌ Error fetching wishlist:", error);
         res.status(500).json({ message: "Error fetching wishlist", wishList: [] });
     }
 };

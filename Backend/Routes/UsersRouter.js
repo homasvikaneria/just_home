@@ -11,7 +11,7 @@ UsersRouter.post("/register", upload.single("profileImage"), addUser);
 UsersRouter.post("/login", loginUser);
 UsersRouter.get("/:userId/wishlist", getUserWishlist);
 UsersRouter.put("/:userId/wishlist/:propertyId", updateWishlist); // 🔄 Use updateWishlist function
-UsersRouter.delete("/users/:userId/wishlist/:propertyId", removeFromWishlist);
+UsersRouter.delete("/:userId/wishlist/:propertyId", removeFromWishlist);
 UsersRouter.put("/update/:userId", upload.single("profileImage"), updateUserProfile);
 
 

@@ -1,4 +1,3 @@
-// just_home/Frontend/vite-project/src/Components/Listing/Listings.jsx
 // Frontend/vite-project/src/Components/Listing/Listings.jsx
 import React, { useState } from "react";
 import { categories } from "../../assets/data";
@@ -32,7 +31,6 @@ const Listings = ({ onSelectCategory }) => {
           </div>
         ))}
       </div>
-      {selectedCategory && <p className="categor">Cateory: {selectedCategory}</p>}
     </section>
   );
 };
