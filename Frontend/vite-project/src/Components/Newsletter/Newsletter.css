@@ -3,7 +3,7 @@
     text-align: center;
     background-color: #f8f8f8;
     padding: 80px 0px 0px 0px;
-    margin: 55px 0px 0px 0px;
+    margin: 50px 0px 20px 0px;
 }
 
 .newsletter-content {
@@ -14,7 +14,7 @@
 .newsletter-icon {
     width: 50px;
     height: 50px;
-    background-color: #FFC107;
+    background-color: #f4c869;
     border-radius: 50%;
     padding: 10px;
 }

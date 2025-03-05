@@ -23,7 +23,7 @@ const LandingPage = () => {
                 </div>
                 <div className="sub-text-container">
                     From as low as $10 per day with limited time offer discounts. <br />
-                    <span className="yellowtext">Browse More Properties -</span>
+                    <span className="yellowtext"onClick={() => navigate("/homepage")} >Browse More Properties - </span>
                 </div>
 
                 <div className="main-yellowbox">
@@ -45,42 +45,9 @@ const LandingPage = () => {
                 </div>
             </div>
 
-            <div className="why-container">
-                <h2 className="why-title">Why You Should Work With Us</h2>
-                <p className="why-subtitle">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </p>
-                <div className="why-features">
-                    <div className="feature">
-                        <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740117089/vbwcfkpwnfq6plubfdrp.png" alt="Wide Range of Properties" className="feature-icon" />
-                        <h3 className="feature-title">Wide Range of Properties</h3>
-                        <p className="feature-text">
-                            We offer expert legal help for all related property items in Dubai.
-                        </p>
-                    </div>
-                    <div className="feature">
-                        <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740117120/yy8viopk1y37otgyeufd.png" alt="Buy or Rent Homes" className="feature-icon" />
-                        <h3 className="feature-title">Buy or Rent Homes</h3>
-                        <p className="feature-text">
-                            We sell your home at the best market price and very quickly as well.
-                        </p>
-                    </div>
-                    <div className="feature">
-                        <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740117166/vtstdkflu28ohv7g9acf.png" alt="Trusted by Thousands" className="feature-icon" />
-                        <h3 className="feature-title">Trusted by Thousands</h3>
-                        <p className="feature-text">
-                            We offer you free consultancy to get a loan for your new home.
-                        </p>
-                    </div>
-                </div>
-            </div>
 
-            <div className="hero-container">
-                <button className="signup-button" onClick={() => navigate("/homepage")}>
-                    Get Started →
-                </button>
 
-            </div>
+
 
 
 
@@ -153,13 +120,14 @@ const LandingPage = () => {
 
 
 
-            <Newsletter />
-            <Footer/>
+            
 
         </div>
     );
 };
 
 export default LandingPage;
+
+
 
 

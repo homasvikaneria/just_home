@@ -1,3 +1,4 @@
+// just_home/Frontend/vite-project/src/Components/SearchResults/SearchResults.jsx
 // Frontend/vite-project/src/Components/SearchResults/SearchResults.jsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -25,16 +26,17 @@ const SearchResults = () => {
     if (!searchQuery?.trim()) return;
     setLoading(true);
 
-    fetch(`http://localhost:8000/properties?search=${encodeURIComponent(searchQuery)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProperties(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to fetch search results.");
-        setLoading(false);
-      });
+    fetch(`http://localhost:8000/properties?category=${encodeURIComponent(searchQuery)}`)
+    .then((res) => res.json())
+    .then((data) => {
+      setProperties(Array.isArray(data) ? data : []);
+      setLoading(false);
+    })
+    .catch(() => {
+      setError("Failed to fetch search results.");
+      setLoading(false);
+    });
+
   }, [searchQuery]);
 
   // Fetch user's wishlist on load

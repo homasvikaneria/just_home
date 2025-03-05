@@ -1,11 +1,14 @@
-// Frontend/vite-project/src/Components/PropertyForm/PropertyForm.jsx
+// just_home/Frontend/vite-project/src/Components/PropertyForm/PropertyForm.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import './PropertyForm.css'; // You'll need to create this CSS file
+import Listings from '../Listing/Listings';
+import './PropertyForm.css';
+import Mainnavbar from '../Mainnav/Mainnavbar'; 
 
 const PropertyForm = () => {
   const [formData, setFormData] = useState({
     selectedCategory: '',
+    category: '', // Added category field
     address: {
       street: '',
       apartment: '',
@@ -21,201 +24,204 @@ const PropertyForm = () => {
       beds: 1,
     },
     selectedFeatures: [],
-    photos: [], // This will store photo URLs
+    photos: [],
     charmInfo: {
       title: '',
       description: '',
       listingType: 'rent',
-      price: 0,
+      price: { amount: 0, currency: 'INR' }, // Fixed price structure
     },
     owner: {
       name: '',
       phone: '',
       email: '',
-    }
+    },
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [photoFiles, setPhotoFiles] = useState([]);
-  
+
   const features = [
     "Pet-Friendly Space", "Lush Garden", "Swimming Pool", "Mountain View",
     "Ocean View", "Air Conditioning", "Heating", "Wi-Fi", "Parking",
     "Washer/Dryer", "Kitchen", "Fireplace", "TV", "Gym", "Hot Tub"
   ];
 
+  const handleCategorySelection = (category) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      selectedCategory: category,
+    }));
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    // Handle nested objects
+
     if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setFormData({
-        ...formData,
-        [parent]: {
-          ...formData[parent],
-          [child]: value
-        }
-      });
+      const [section, field] = name.split('.');
+      setFormData((prevData) => ({
+        ...prevData,
+        [section]: {
+          ...prevData[section],
+          [field]: value,
+        },
+      }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
     }
   };
 
   const handleNumberChange = (e) => {
     const { name, value } = e.target;
     const numValue = parseInt(value) || 0;
-    
+
     if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setFormData({
-        ...formData,
-        [parent]: {
-          ...formData[parent],
-          [child]: numValue
-        }
-      });
+      const [section, field] = name.split('.');
+      setFormData((prevData) => ({
+        ...prevData,
+        [section]: {
+          ...prevData[section],
+          [field]: Math.max(0, numValue),
+        },
+      }));
     } else {
-      setFormData({ ...formData, [name]: numValue });
+      setFormData((prevData) => ({ ...prevData, [name]: Math.max(0, numValue) }));
     }
   };
 
   const handleFeatureToggle = (feature) => {
-    const updatedFeatures = [...formData.selectedFeatures];
-    
-    if (updatedFeatures.includes(feature)) {
-      // Remove if already selected
-      const index = updatedFeatures.indexOf(feature);
-      updatedFeatures.splice(index, 1);
-    } else {
-      // Add if not selected
-      updatedFeatures.push(feature);
-    }
-    
-    setFormData({ ...formData, selectedFeatures: updatedFeatures });
+    setFormData((prevData) => {
+      const updatedFeatures = prevData.selectedFeatures.includes(feature)
+        ? prevData.selectedFeatures.filter(f => f !== feature)
+        : [...prevData.selectedFeatures, feature];
+
+      return { ...prevData, selectedFeatures: updatedFeatures };
+    });
   };
 
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
-    setPhotoFiles([...photoFiles, ...files]);
-    
-    // This is a simplification. In a real app, you would upload these images to a storage service
-    // and then store the URLs. For now, we'll just store file names as placeholders.
-    const newPhotoUrls = files.map(file => URL.createObjectURL(file));
-    setFormData({
-      ...formData,
-      photos: [...formData.photos, ...newPhotoUrls]
-    });
+    if (!files.length) return;
+
+    setPhotoFiles((prevFiles) => [...prevFiles, ...files]);
+
+    const newPhotoUrls = files.map((file) => URL.createObjectURL(file));
+    setFormData((prevData) => ({
+      ...prevData,
+      photos: [...prevData.photos, ...newPhotoUrls],
+    }));
   };
 
   const removePhoto = (index) => {
-    const updatedPhotos = [...formData.photos];
-    updatedPhotos.splice(index, 1);
-    
-    const updatedPhotoFiles = [...photoFiles];
-    updatedPhotoFiles.splice(index, 1);
-    
-    setFormData({ ...formData, photos: updatedPhotos });
-    setPhotoFiles(updatedPhotoFiles);
+    setFormData((prevData) => ({
+      ...prevData,
+      photos: prevData.photos.filter((_, i) => i !== index),
+    }));
+
+    setPhotoFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setMessage({ text: '', type: '' });
-    
-    try {
-      // In a real application, you would upload the photos to a storage service here
-      // and replace the URLs in formData.photos with the actual URLs from the storage service
+    setMessage({ text: "", type: "" });
 
-      // Send data to the server
-      console.log(formData);
-      
-      const response = await axios.post('http://localhost:8000/properties', formData);
-      
-      setMessage({
-        text: 'Property listing created successfully!',
-        type: 'success'
-      });
-      
-      // Reset form
-      setFormData({
-        selectedCategory: '',
-        address: {
-          street: '',
-          apartment: '',
-          landmark: '',
-          country: '',
-          city: '',
-          state: '',
-        },
-        essentialInfo: {
-          guests: 1,
-          bedrooms: 1,
-          bathrooms: 1,
-          beds: 1,
-        },
-        selectedFeatures: [],
-        photos: [],
-        charmInfo: {
-          title: '',
-          description: '',
-          listingType: 'rent',
-          price: 0,
-        },
-        owner: {
-          name: '',
-          phone: '',
-          email: '',
+    try {
+      const submissionData = new FormData();
+
+      submissionData.append("selectedCategory", formData.selectedCategory);
+      submissionData.append("category", formData.category); // Ensure category is sent
+      Object.entries(formData.address).forEach(([key, value]) =>
+        submissionData.append(`address[${key}]`, value)
+      );
+      Object.entries(formData.essentialInfo).forEach(([key, value]) =>
+        submissionData.append(`essentialInfo[${key}]`, value)
+      );
+      formData.selectedFeatures.forEach((feature, index) =>
+        submissionData.append(`selectedFeatures[${index}]`, feature)
+      );
+      Object.entries(formData.charmInfo).forEach(([key, value]) => {
+        if (key === "price") {
+          submissionData.append("charmInfo.price.amount", formData.charmInfo.price.amount);
+          submissionData.append("charmInfo.price.currency", formData.charmInfo.price.currency);
+        } else {
+          submissionData.append(`charmInfo[${key}]`, value);
         }
       });
+      Object.entries(formData.owner).forEach(([key, value]) =>
+        submissionData.append(`owner[${key}]`, value)
+      );
+
+      // Append uploaded photos
+      photoFiles.forEach((file) => submissionData.append("photos", file));
+
+      console.log("Submitting the following data:");
+      for (let [key, value] of submissionData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
+      const response = await axios.post(
+        "http://localhost:8000/properties",
+        submissionData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      console.log("Property created:", response.data);
+      setMessage({ text: "Property listing created successfully!", type: "success" });
+
+      setFormData({
+        selectedCategory: "",
+        category: "",
+        address: { street: "", apartment: "", landmark: "", country: "", city: "", state: "" },
+        essentialInfo: { guests: 1, bedrooms: 1, bathrooms: 1, beds: 1 },
+        selectedFeatures: [],
+        photos: [],
+        charmInfo: { title: "", description: "", listingType: "rent", price: { amount: 0, currency: "INR" } },
+        owner: { name: "", phone: "", email: "" },
+      });
       setPhotoFiles([]);
-      
     } catch (error) {
+      console.error("Error creating listing:", error);
+      if (error.response) {
+        console.error("Server Response:", error.response.data);
+      }
       setMessage({
-        text: error.response?.data?.message || 'Something went wrong. Please try again.',
-        type: 'error'
+        text: error.response?.data?.message || "Something went wrong. Please try again.",
+        type: "error",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
+
+
+  
+
   return (
+    <div>
+      <Mainnavbar/>
     <div className="property-form-container">
       <h1>Create Property Listing</h1>
-      
-      {message.text && (
-        <div className={`message ${message.type}`}>
-          {message.text}
-        </div>
-      )}
-      
+      {/* Integrate Listings for category selection */}
+      <Listings onSelectCategory={handleCategorySelection} />
       <form onSubmit={handleSubmit} className="property-form">
         {/* Step 1: Property Category */}
         <div className="form-section">
           <h2>Property Category</h2>
           <div className="form-group">
-            <label htmlFor="selectedCategory">Property Type</label>
-            <select
+            <label htmlFor="selectedCategory">Selected Category</label>
+            <input
+              type="text"
               id="selectedCategory"
               name="selectedCategory"
               value={formData.selectedCategory}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select a category</option>
-              <option value="Whole Home">Whole Home</option>
-              <option value="Private Room">Private Room</option>
-              <option value="Shared Room">Shared Room</option>
-              <option value="Apartment">Apartment</option>
-              <option value="Villa">Villa</option>
-              <option value="Condo">Condo</option>
-            </select>
+              readOnly
+            />
           </div>
         </div>
-        
+
         {/* Step 2: Property Address */}
         <div className="form-section">
           <h2>Property Address</h2>
@@ -230,7 +236,6 @@ const PropertyForm = () => {
               required
             />
           </div>
-          
           <div className="form-group">
             <label htmlFor="address.apartment">Apartment/Suite (optional)</label>
             <input
@@ -241,7 +246,6 @@ const PropertyForm = () => {
               onChange={handleChange}
             />
           </div>
-          
           <div className="form-group">
             <label htmlFor="address.landmark">Landmark (optional)</label>
             <input
@@ -252,7 +256,6 @@ const PropertyForm = () => {
               onChange={handleChange}
             />
           </div>
-          
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="address.country">Country*</label>
@@ -265,7 +268,6 @@ const PropertyForm = () => {
                 required
               />
             </div>
-            
             <div className="form-group">
               <label htmlFor="address.city">City*</label>
               <input
@@ -277,7 +279,6 @@ const PropertyForm = () => {
                 required
               />
             </div>
-            
             <div className="form-group">
               <label htmlFor="address.state">State/Province*</label>
               <input
@@ -291,7 +292,7 @@ const PropertyForm = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Step 3: Essential Information */}
         <div className="form-section">
           <h2>Essential Information</h2>
@@ -304,11 +305,10 @@ const PropertyForm = () => {
                 name="essentialInfo.guests"
                 min="1"
                 value={formData.essentialInfo.guests}
-                onChange={handleNumberChange}
+                onChange={handleChange}
                 required
               />
             </div>
-            
             <div className="form-group">
               <label htmlFor="essentialInfo.bedrooms">Bedrooms*</label>
               <input
@@ -317,11 +317,10 @@ const PropertyForm = () => {
                 name="essentialInfo.bedrooms"
                 min="1"
                 value={formData.essentialInfo.bedrooms}
-                onChange={handleNumberChange}
+                onChange={handleChange}
                 required
               />
             </div>
-            
             <div className="form-group">
               <label htmlFor="essentialInfo.bathrooms">Bathrooms*</label>
               <input
@@ -330,11 +329,10 @@ const PropertyForm = () => {
                 name="essentialInfo.bathrooms"
                 min="1"
                 value={formData.essentialInfo.bathrooms}
-                onChange={handleNumberChange}
+                onChange={handleChange}
                 required
               />
             </div>
-            
             <div className="form-group">
               <label htmlFor="essentialInfo.beds">Beds*</label>
               <input
@@ -343,14 +341,14 @@ const PropertyForm = () => {
                 name="essentialInfo.beds"
                 min="1"
                 value={formData.essentialInfo.beds}
-                onChange={handleNumberChange}
+                onChange={handleChange}
                 required
               />
             </div>
           </div>
         </div>
-        
-        {/* Step 4: Features */}
+
+        {/* Step 4: Property Features */}
         <div className="form-section">
           <h2>Property Features</h2>
           <div className="features-container">
@@ -367,8 +365,8 @@ const PropertyForm = () => {
             ))}
           </div>
         </div>
-        
-        {/* Step 5: Photos */}
+
+        {/* Step 5: Property Photos */}
         <div className="form-section">
           <h2>Property Photos</h2>
           <div className="photo-upload">
@@ -381,7 +379,6 @@ const PropertyForm = () => {
             />
             <label htmlFor="photos" className="upload-button">Add Photos</label>
           </div>
-          
           {formData.photos.length > 0 && (
             <div className="photo-preview-container">
               {formData.photos.map((photo, index) => (
@@ -399,7 +396,7 @@ const PropertyForm = () => {
             </div>
           )}
         </div>
-        
+
         {/* Step 6: Charm Information */}
         <div className="form-section">
           <h2>Property Details</h2>
@@ -414,7 +411,6 @@ const PropertyForm = () => {
               required
             />
           </div>
-          
           <div className="form-group">
             <label htmlFor="charmInfo.description">Description*</label>
             <textarea
@@ -426,7 +422,6 @@ const PropertyForm = () => {
               required
             ></textarea>
           </div>
-          
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="charmInfo.listingType">Listing Type*</label>
@@ -441,7 +436,6 @@ const PropertyForm = () => {
                 <option value="sale">For Sale</option>
               </select>
             </div>
-            
             <div className="form-group">
               <label htmlFor="charmInfo.price">
                 {formData.charmInfo.listingType === 'rent' ? 'Price per day*' : 'Sale Price*'}
@@ -458,57 +452,36 @@ const PropertyForm = () => {
             </div>
           </div>
         </div>
-        
-        {/* Step 7: Owner Information */}
-        <div className="form-section">
-          <h2>Owner Information</h2>
-          <div className="form-group">
-            <label htmlFor="owner.name">Name*</label>
-            <input
-              type="text"
-              id="owner.name"
-              name="owner.name"
-              value={formData.owner.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="owner.phone">Phone*</label>
-              <input
-                type="tel"
-                id="owner.phone"
-                name="owner.phone"
-                value={formData.owner.phone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="owner.email">Email*</label>
-              <input
-                type="email"
-                id="owner.email"
-                name="owner.email"
-                value={formData.owner.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-        </div>
-        
-        <div className="form-actions">
-          <button type="submit" className="submit-button" disabled={isLoading}>
-            {isLoading ? 'Creating Listing...' : 'Create Listing'}
-          </button>
-        </div>
-      </form>
+
+{/* Step 7: Owner Information */}
+<div className="form-section">
+  <h2>Owner Information</h2>
+  {['name', 'phone', 'email'].map((field) => (
+    <div key={field} className="form-group">
+      <label htmlFor={`owner.${field}`}>
+        {field.charAt(0).toUpperCase() + field.slice(1)}
+      </label>
+      <input
+        type="text"
+        id={`owner.${field}`}
+        name={`owner.${field}`}
+        value={formData.owner[field]}
+        onChange={handleChange}
+        required
+      />
     </div>
-  );
-};
+  ))}
+</div>
+
+<div className="form-actions">
+  <button type="submit" className="submit-button" disabled={isLoading}>
+    {isLoading ? 'Creating Listing...' : 'Create Listing'}
+  </button>
+</div>
+</form>
+</div>
+</div>
+);}
 
 export default PropertyForm;
+
