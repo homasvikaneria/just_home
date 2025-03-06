@@ -221,13 +221,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { FaSearch, FaHome, FaUserTie, FaKey, FaAmazon, FaSpotify, FaCamera } from "react-icons/fa";
+import { FaAmazon, FaSpotify} from "react-icons/fa";
 import "./HomePage.css";
 import Mainnavbar from "../Mainnav/Mainnavbar";
 import Footer from "../Footer/Footer";
 import SearchBar from "../SearchBar/SearchBar";
 import { SiAmd, SiCisco, SiLogitech, } from "react-icons/si";
 import Newsletter from "../Newsletter/Newsletter";
+import { jwtDecode } from "jwt-decode";
 
 const HomePage = () => {
   const [randomProperties, setRandomProperties] = useState([]);
@@ -255,6 +256,30 @@ const HomePage = () => {
 
   const handleFilterClick = (filterType) => {
     navigate(`/search-results?type=${filterType}`);
+  };
+
+
+
+  // Function to check authentication
+  const isAuthenticated = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return false;
+
+    try {
+      const decoded = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+      return decoded.exp > currentTime;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const handleGetStarted = () => {
+    if (isAuthenticated()) {
+      navigate("/propertyform");
+    } else {
+      navigate("/register");
+    }
   };
 
   return (
@@ -293,44 +318,44 @@ const HomePage = () => {
       </div>
 
       <div className="trusted-companies">
-      <p>Thousands of world's leading companies trust Space</p>
-      <div className="icon-container">
-        <FaAmazon size={40} />
-        <SiAmd size={40} />
-        <SiCisco size={40} />
-        <SiLogitech size={40} />
-        <FaSpotify size={40} />
-      </div>
-    </div>
-
-    <div className="dream-house-container">
-
-      <h2 className="title">Find Your Dream House as Easy as 1,2,3</h2>
-      <p className="subtitle">Lorem ipsum dolor sit amet</p>
-      <div className="steps-container">
-        <div className="step">
-          <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741069020/jjnspd5wqgtwtse7fpue.png" alt="Search Home" className="step-img" />
-          <h3 className="step-title">1. Search for your favorite house in your location</h3>
-          <p className="step-description">
-            Pellentesque egestas elementum egestas faucibus sem.
-          </p>
-        </div>
-        <div className="step">
-          <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741069101/a75hqamtcugduhdynlrz.png" alt="Make Appointment" className="step-img" />
-          <h3 className="step-title">2. Make a visit appointment with one of our agents</h3>
-          <p className="step-description">
-            Pellentesque egestas elementum egestas faucibus sem.
-          </p>
-        </div>
-        <div className="step">
-          <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741069123/ujucvdesdwvm8d8yhknx.png" alt="Get Dream House" className="step-img" />
-          <h3 className="step-title">3. Get your dream house in a month, or less</h3>
-          <p className="step-description">
-            Pellentesque egestas elementum egestas faucibus sem.
-          </p>
+        <p>Thousands of world's leading companies trust Space</p>
+        <div className="icon-container">
+          <FaAmazon size={40} />
+          <SiAmd size={40} />
+          <SiCisco size={40} />
+          <SiLogitech size={40} />
+          <FaSpotify size={40} />
         </div>
       </div>
-    </div>
+
+      <div className="dream-house-container">
+
+        <h2 className="title">Find Your Dream House as Easy as 1,2,3</h2>
+        <p className="subtitle">Lorem ipsum dolor sit amet</p>
+        <div className="steps-container">
+          <div className="step">
+            <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741069020/jjnspd5wqgtwtse7fpue.png" alt="Search Home" className="step-img" />
+            <h3 className="step-title">1. Search for your favorite house in your location</h3>
+            <p className="step-description">
+              Pellentesque egestas elementum egestas faucibus sem.
+            </p>
+          </div>
+          <div className="step">
+            <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741069101/a75hqamtcugduhdynlrz.png" alt="Make Appointment" className="step-img" />
+            <h3 className="step-title">2. Make a visit appointment with one of our agents</h3>
+            <p className="step-description">
+              Pellentesque egestas elementum egestas faucibus sem.
+            </p>
+          </div>
+          <div className="step">
+            <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741069123/ujucvdesdwvm8d8yhknx.png" alt="Get Dream House" className="step-img" />
+            <h3 className="step-title">3. Get your dream house in a month, or less</h3>
+            <p className="step-description">
+              Pellentesque egestas elementum egestas faucibus sem.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* 🔹 Random Properties Section */}
       <section className="random-properties">
@@ -349,55 +374,37 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* 🔹 Become a Real Estate Agent Section */}
-      {/* <section className="real-estate-agent">
-        <div className="agent-text">
-          <h2>Become a Real Estate Agent</h2>
-          <p>Pellentesque egestas elementum egestas faucibus sem. Velit nunc egestas ut morbi. Leo diam diam.</p>
-          <div className="cta-container">
-            <a href="/register-agent" className="register-btn1">Register Now →</a>
-            <span className="contact-info">📞 +68 685 88666</span>
+      <section className="why-work-container">
+        {/* Left side images */}
+        <div className="image-section">
+          <div className="overlay-image">
+            <img className="family" src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741147233/mqymnzw7q3v3tmwksdgx.png" alt="Happy Family" />
+          </div>
+          <div className="main-image">
+            <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741147374/leegx0mdhoh7nlpuzxwp.png" alt="Modern House" />
+          </div>
+          <div className="property-tag">
+            <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741148232/k7ltgn2ymwyaxsx3thop.png" alt="" />
+
           </div>
         </div>
 
-        <div className="agent-image-container">
-          <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1740196542/gjtsz4xhmpfjb6vjllf1.png" alt="Real Estate Agent" className="agent-image" />
+        {/* Right side text */}
+        <div className="text-section">
+          <h2>Why You Should Work With Us</h2>
+          <p>
+            Pellentesque egestas elementum egestas faucibus sem. Velit nunc egestas ut morbi. Leo diam diam.
+          </p>
+          <ul>
+            <p>✔ 100% Secure</p>
+            <p>✔ Wide Range of Properties</p>
+            <p>✔ Buy or Rent Homes</p>
+            <p>✔ Trusted by Thousands</p>
+          </ul>
+          <button className="learn-more-btn">Learn More →</button>
         </div>
-      </section> */}
+      </section>
 
-
-
-    <section className="why-work-container">
-      {/* Left side images */}
-      <div className="image-section">
-        <div className="overlay-image">
-          <img className="family" src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741147233/mqymnzw7q3v3tmwksdgx.png" alt="Happy Family" />
-        </div>
-        <div className="main-image">
-          <img  src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741147374/leegx0mdhoh7nlpuzxwp.png" alt="Modern House" />
-        </div>
-        <div className="property-tag">
-         <img  src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741148232/k7ltgn2ymwyaxsx3thop.png" alt="" />
-          
-        </div>
-      </div>
-
-      {/* Right side text */}
-      <div className="text-section">
-        <h2>Why You Should Work With Us</h2>
-        <p>
-          Pellentesque egestas elementum egestas faucibus sem. Velit nunc egestas ut morbi. Leo diam diam.
-        </p>
-        <ul>
-          <p>✔ 100% Secure</p>
-          <p>✔ Wide Range of Properties</p>
-          <p>✔ Buy or Rent Homes</p>
-          <p>✔ Trusted by Thousands</p>
-        </ul>
-        <button className="learn-more-btn">Learn More →</button>
-      </div>
-    </section>
-  
 
 
 
@@ -407,23 +414,28 @@ const HomePage = () => {
           <div className="home-card-content">
             <h2>Looking for the new home?</h2>
             <p>10 new offers every day. 350 offers on site, trusted by a community of thousands of users.</p>
-            <button className="home-btn">Get Started →</button>
+            <button className="home-btn" onClick={() => navigate("/search-results")}>Get Started →</button>
           </div>
           <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741010102/ytxvtxbk97lawdofdxk1.png" alt="House" className="home-image" />
         </div>
 
         <div className="home-card right-card">
-          {/* Right Card */}
           <div className="home-card-content">
             <h2>Want to sell your home?</h2>
             <p>10 new offers every day. 350 offers on site, trusted by a community of thousands of users.</p>
-            <button className="home-btn">Get Started →</button>
+            <button className="home-btn" onClick={handleGetStarted}>
+              Get Started →
+            </button>
           </div>
-          <img src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741010129/xu2chkh6l3pyjipklmmz.png" alt="House" className="home-image" />
+          <img
+            src="https://res.cloudinary.com/dmfjcttu9/image/upload/v1741010129/xu2chkh6l3pyjipklmmz.png"
+            alt="House"
+            className="home-image"
+          />
         </div>
       </div>
 
-      
+
       <Newsletter />
       <Footer />
     </div>
