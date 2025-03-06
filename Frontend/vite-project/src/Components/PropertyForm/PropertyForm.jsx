@@ -1,16 +1,42 @@
-// just_home/Frontend/vite-project/src/Components/PropertyForm/PropertyForm.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import Listings from '../Listing/Listings';
 import './PropertyForm.css';
 import Mainnavbar from '../Mainnav/Mainnavbar';
+import {
+  TextField,
+  Button,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Checkbox,
+  ListItemText,
+  OutlinedInput,
+  FormGroup,
+  FormControlLabel,
+  Grid,
+  Typography,
+  Paper,
+  Chip,
+  Snackbar,
+  Box,
+  Alert,
+  IconButton,
+  FormHelperText,
+  InputAdornment,
+  ToggleButton,
+  ToggleButtonGroup
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 
-// Add this array of features if not already defined
+// Features array
 const features = [
   'WiFi', 'Kitchen', 'Pool', 'Gym',
   'Air Conditioning', 'Workspace', 'Washing Machine',
   "Pet-Friendly Space", "Lush Garden", "Swimming Pool", "Mountain View",
-  "Ocean View", , "Heating", "Parking",
+  "Ocean View", "Heating", "Parking",
   "Washer/Dryer", "Fireplace", "Hot Tub",
   "TV"
 ];
@@ -38,7 +64,7 @@ const PropertyForm = () => {
     charmInfo: {
       title: '',
       description: '',
-      listingType: 'rent', // Added default value
+      listingType: 'rent',
       price: { amount: 0, currency: 'INR' },
     },
     owner: {
@@ -48,7 +74,12 @@ const PropertyForm = () => {
     },
   });
 
-  // 🆕 Added missing handleChange function
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const [photoFiles, setPhotoFiles] = useState([]);
+  const [successMessage, setSuccessMessage] = useState(false);
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const keys = name.split('.');
@@ -77,7 +108,6 @@ const PropertyForm = () => {
     }
   };
 
-  // 🆕 Added missing handleNumberChange function
   const handleNumberChange = (e) => {
     const { name, value } = e.target;
     const numValue = value === '' ? 0 : Number(value);
@@ -98,30 +128,12 @@ const PropertyForm = () => {
     }
   };
 
-  // 🆕 Added missing handleFeatureToggle function
-  const handleFeatureToggle = (feature) => {
+  const handleFeaturesChange = (event, newFeatures) => {
     setFormData(prev => ({
       ...prev,
-      selectedFeatures: prev.selectedFeatures.includes(feature)
-        ? prev.selectedFeatures.filter(f => f !== feature)
-        : [...prev.selectedFeatures, feature]
+      selectedFeatures: newFeatures
     }));
   };
-
-  // 🆕 Added missing removePhoto function
-  const removePhoto = (indexToRemove) => {
-    setFormData(prev => ({
-      ...prev,
-      photos: prev.photos.filter((_, index) => index !== indexToRemove)
-    }));
-    setPhotoFiles(prev => prev.filter((_, index) => index !== indexToRemove));
-  };
-
-  // Rest of the code remains the same as in your original component
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
-  const [photoFiles, setPhotoFiles] = useState([]);
-
 
   const handleCategorySelection = (category) => {
     setFormData((prevData) => ({
@@ -132,15 +144,21 @@ const PropertyForm = () => {
   };
 
   const handlePhotoChange = (e) => {
-    const files = Array.from(e.target.files); // Convert FileList to an array
-    setPhotoFiles((prevFiles) => [...prevFiles, ...files]); // Add new files to the photoFiles state
+    const files = Array.from(e.target.files);
+    setPhotoFiles((prevFiles) => [...prevFiles, ...files]);
     setFormData((prevData) => ({
       ...prevData,
-      photos: [...prevData.photos, ...files], // Update photos in formData
+      photos: [...prevData.photos, ...files],
     }));
   };
 
-
+  const removePhoto = (indexToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      photos: prev.photos.filter((_, index) => index !== indexToRemove)
+    }));
+    setPhotoFiles(prev => prev.filter((_, index) => index !== indexToRemove));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -223,289 +241,664 @@ const PropertyForm = () => {
     }
   };
 
-
   return (
     <div>
       <Mainnavbar />
-      <div className="property-form-container">
-        <h1>Create Property Listing</h1>
+      <Box sx={{ padding: 3 }}>
         <Listings onSelectCategory={handleCategorySelection} />
-        <form onSubmit={handleSubmit} className="property-form">
-          {/* Step 1: Property Category */}
-          <div className="form-section">
-            <h2>Property Category</h2>
-            <div className="form-group">
-              <label htmlFor="selectedCategory">Selected Category</label>
-              <input
-                type="text"
-                id="selectedCategory"
+
+        <Paper elevation={3} sx={{ padding: 3, marginTop: 3 }}>
+          <form onSubmit={handleSubmit}>
+            {/* Success/Error Message */}
+            {message.text && (
+              <Box
+                sx={{
+                  padding: 2,
+                  marginBottom: 2,
+                  backgroundColor: message.type === 'success' ? '#e8f5e9' : '#ffebee',
+                  borderRadius: 1
+                }}
+              >
+                <Typography color={message.type === 'success' ? 'success' : 'error'}>
+                  {message.text}
+                </Typography>
+              </Box>
+            )}
+
+            {/* Step 1: Property Category */}
+            <Paper elevation={1} sx={{ padding: 2, marginBottom: 3 }}>
+              <Typography variant="h5" gutterBottom>Property Category</Typography>
+              <TextField
+                fullWidth
+                label="Selected Category"
+                variant="outlined"
                 name="selectedCategory"
                 value={formData.selectedCategory}
-                readOnly
+                InputProps={{ readOnly: true }}
+                margin="normal"
               />
-            </div>
-          </div>
+            </Paper>
 
-          {/* Step 2: Property Address */}
-          <div className="form-section">
-            <h2>Property Address</h2>
-            <div className="form-group">
-              <label htmlFor="address.street">Street Address*</label>
-              <input
-                type="text"
-                id="address.street"
+            {/* Step 2: Property Address */}
+            <Paper elevation={1} sx={{ padding: 2, marginBottom: 3 }}>
+              <Typography variant="h5" gutterBottom>Property Address</Typography>
+              <TextField
+                fullWidth
+                label="Street Address*"
+                variant="outlined"
                 name="address.street"
                 value={formData.address.street}
                 onChange={handleChange}
                 required
+                margin="normal"
               />
-            </div>
-            <div className="form-group">
-              <label htmlFor="address.apartment">Apartment/Suite (optional)</label>
-              <input
-                type="text"
-                id="address.apartment"
+              <TextField
+                fullWidth
+                label="Apartment/Suite (optional)"
+                variant="outlined"
                 name="address.apartment"
                 value={formData.address.apartment}
                 onChange={handleChange}
+                margin="normal"
               />
-            </div>
-            <div className="form-group">
-              <label htmlFor="address.landmark">Landmark (optional)</label>
-              <input
-                type="text"
-                id="address.landmark"
+              <TextField
+                fullWidth
+                label="Landmark (optional)"
+                variant="outlined"
                 name="address.landmark"
                 value={formData.address.landmark}
                 onChange={handleChange}
+                margin="normal"
               />
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="address.country">Country*</label>
-                <input
-                  type="text"
-                  id="address.country"
-                  name="address.country"
-                  value={formData.address.country}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="address.city">City*</label>
-                <input
-                  type="text"
-                  id="address.city"
-                  name="address.city"
-                  value={formData.address.city}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="address.state">State/Province*</label>
-                <input
-                  type="text"
-                  id="address.state"
-                  name="address.state"
-                  value={formData.address.state}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Step 3: Essential Information */}
-          <div className="form-section">
-            <h2>Essential Information</h2>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="essentialInfo.guests">Guests*</label>
-                <input
-                  type="number"
-                  id="essentialInfo.guests"
-                  name="essentialInfo.guests"
-                  min="1"
-                  value={formData.essentialInfo.guests}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="essentialInfo.bedrooms">Bedrooms*</label>
-                <input
-                  type="number"
-                  id="essentialInfo.bedrooms"
-                  name="essentialInfo.bedrooms"
-                  min="1"
-                  value={formData.essentialInfo.bedrooms}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="essentialInfo.bathrooms">Bathrooms*</label>
-                <input
-                  type="number"
-                  id="essentialInfo.bathrooms"
-                  name="essentialInfo.bathrooms"
-                  min="1"
-                  value={formData.essentialInfo.bathrooms}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="essentialInfo.beds">Beds*</label>
-                <input
-                  type="number"
-                  id="essentialInfo.beds"
-                  name="essentialInfo.beds"
-                  min="1"
-                  value={formData.essentialInfo.beds}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Step 4: Property Features */}
-          <div className="form-section">
-            <h2>Property Features</h2>
-            <div className="features-container">
-              {features.map((feature) => (
-                <div className="feature-item" key={feature}>
-                  <input
-                    type="checkbox"
-                    id={`feature-${feature}`}
-                    checked={formData.selectedFeatures.includes(feature)}
-                    onChange={() => handleFeatureToggle(feature)}
+              <Grid container spacing={2} sx={{ mt: 1 }}>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="Country*"
+                    variant="outlined"
+                    name="address.country"
+                    value={formData.address.country}
+                    onChange={handleChange}
+                    required
                   />
-                  <label htmlFor={`feature-${feature}`}>{feature}</label>
-                </div>
-              ))}
-            </div>
-          </div>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="City*"
+                    variant="outlined"
+                    name="address.city"
+                    value={formData.address.city}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="State/Province*"
+                    variant="outlined"
+                    name="address.state"
+                    value={formData.address.state}
+                    onChange={handleChange}
+                    required
+                  />
+                </Grid>
+              </Grid>
+            </Paper>
 
-          {/* Step 5: Property Photos */}
-          <div className="form-section">
-            <h2>Property Photos</h2>
-            <div className="photo-upload">
-              <input
-                type="file"
-                id="photos"
-                accept="image/*"
+            {/* Step 3: Essential Information */}
+            {/* Step 3: Essential Information */}
+<Paper elevation={1} sx={{ padding: 2, marginBottom: 3, borderRadius: '8px' }}>
+  <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: '#2C3E50', mb: 2 }}>
+    Essential Information
+  </Typography>
+  <Grid container spacing={3}>
+    <Grid item xs={12} sm={3}>
+      <TextField
+        fullWidth
+        label="Guests*"
+        variant="outlined"
+        type="number"
+        name="essentialInfo.guests"
+        value={formData.essentialInfo.guests}
+        onChange={handleChange}
+        InputProps={{
+          inputProps: { min: 1 },
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton
+                onClick={() => {
+                  if (formData.essentialInfo.guests > 1) {
+                    setFormData(prev => ({
+                      ...prev,
+                      essentialInfo: {
+                        ...prev.essentialInfo,
+                        guests: prev.essentialInfo.guests - 1
+                      }
+                    }));
+                  }
+                }}
+                size="small"
+                sx={{
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: '#e0e0e0'
+                  }
+                }}
+              >
+                -
+              </IconButton>
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => {
+                  setFormData(prev => ({
+                    ...prev,
+                    essentialInfo: {
+                      ...prev.essentialInfo,
+                      guests: prev.essentialInfo.guests + 1
+                    }
+                  }));
+                }}
+                size="small"
+                sx={{
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: '#e0e0e0'
+                  }
+                }}
+              >
+                +
+              </IconButton>
+            </InputAdornment>
+          )
+        }}
+        required
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#3f51b5',
+            },
+          }
+        }}
+      />
+    </Grid>
+    <Grid item xs={12} sm={3}>
+      <TextField
+        fullWidth
+        label="Bedrooms*"
+        variant="outlined"
+        type="number"
+        name="essentialInfo.bedrooms"
+        value={formData.essentialInfo.bedrooms}
+        onChange={handleChange}
+        InputProps={{
+          inputProps: { min: 1 },
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton
+                onClick={() => {
+                  if (formData.essentialInfo.bedrooms > 1) {
+                    setFormData(prev => ({
+                      ...prev,
+                      essentialInfo: {
+                        ...prev.essentialInfo,
+                        bedrooms: prev.essentialInfo.bedrooms - 1
+                      }
+                    }));
+                  }
+                }}
+                size="small"
+                sx={{
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: '#e0e0e0'
+                  }
+                }}
+              >
+                -
+              </IconButton>
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => {
+                  setFormData(prev => ({
+                    ...prev,
+                    essentialInfo: {
+                      ...prev.essentialInfo,
+                      bedrooms: prev.essentialInfo.bedrooms + 1
+                    }
+                  }));
+                }}
+                size="small"
+                sx={{
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: '#e0e0e0'
+                  }
+                }}
+              >
+                +
+              </IconButton>
+            </InputAdornment>
+          )
+        }}
+        required
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#3f51b5',
+            },
+          }
+        }}
+      />
+    </Grid>
+    <Grid item xs={12} sm={3}>
+      <TextField
+        fullWidth
+        label="Bathrooms*"
+        variant="outlined"
+        type="number"
+        name="essentialInfo.bathrooms"
+        value={formData.essentialInfo.bathrooms}
+        onChange={handleChange}
+        InputProps={{
+          inputProps: { min: 1 },
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton
+                onClick={() => {
+                  if (formData.essentialInfo.bathrooms > 1) {
+                    setFormData(prev => ({
+                      ...prev,
+                      essentialInfo: {
+                        ...prev.essentialInfo,
+                        bathrooms: prev.essentialInfo.bathrooms - 1
+                      }
+                    }));
+                  }
+                }}
+                size="small"
+                sx={{
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: '#e0e0e0'
+                  }
+                }}
+              >
+                -
+              </IconButton>
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => {
+                  setFormData(prev => ({
+                    ...prev,
+                    essentialInfo: {
+                      ...prev.essentialInfo,
+                      bathrooms: prev.essentialInfo.bathrooms + 1
+                    }
+                  }));
+                }}
+                size="small"
+                sx={{
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: '#e0e0e0'
+                  }
+                }}
+              >
+                +
+              </IconButton>
+            </InputAdornment>
+          )
+        }}
+        required
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#3f51b5',
+            },
+          }
+        }}
+      />
+    </Grid>
+    <Grid item xs={12} sm={3}>
+      <TextField
+        fullWidth
+        label="Beds*"
+        variant="outlined"
+        type="number"
+        name="essentialInfo.beds"
+        value={formData.essentialInfo.beds}
+        onChange={handleChange}
+        InputProps={{
+          inputProps: { min: 1 },
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton
+                onClick={() => {
+                  if (formData.essentialInfo.beds > 1) {
+                    setFormData(prev => ({
+                      ...prev,
+                      essentialInfo: {
+                        ...prev.essentialInfo,
+                        beds: prev.essentialInfo.beds - 1
+                      }
+                    }));
+                  }
+                }}
+                size="small"
+                sx={{
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: '#e0e0e0'
+                  }
+                }}
+              >
+                -
+              </IconButton>
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => {
+                  setFormData(prev => ({
+                    ...prev,
+                    essentialInfo: {
+                      ...prev.essentialInfo,
+                      beds: prev.essentialInfo.beds + 1
+                    }
+                  }));
+                }}
+                size="small"
+                sx={{
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: '#e0e0e0'
+                  }
+                }}
+              >
+                +
+              </IconButton>
+            </InputAdornment>
+          )
+        }}
+        required
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#3f51b5',
+            },
+          }
+        }}
+      />
+    </Grid>
+  </Grid>
+</Paper>
+
+            {/* Step 4: Property Features with ToggleButtons */}
+            <Paper elevation={1} sx={{ padding: 2, marginBottom: 3 }}>
+              <Typography variant="h5" gutterBottom>Property Features</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Select all features that your property offers
+              </Typography>
+
+              <ToggleButtonGroup
+                value={formData.selectedFeatures}
+                onChange={handleFeaturesChange}
+                aria-label="property features"
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, 1fr)',
+                  gap: 1,
+                  width: '100%'
+                }}
                 multiple
-                onChange={handlePhotoChange}  // Use handlePhotoChange to update photos
-              />
-              <label htmlFor="photos" className="upload-button">Add Photos</label>
-            </div>
-            {formData.photos.length > 0 && (
-              <div className="photo-preview-container">
-                {formData.photos.map((photo, index) => (
-                  <div className="photo-preview" key={index}>
-                    <img src={URL.createObjectURL(photo)} alt={`Property ${index + 1}`} />
-                    <button
-                      type="button"
-                      onClick={() => removePhoto(index)}
-                      className="remove-photo"
-                    >
-                      ×
-                    </button>
-                  </div>
+              >
+                {features.map((feature) => (
+                  <ToggleButton
+                    key={feature}
+                    value={feature}
+                    sx={{
+                      margin: '4px',
+                      
+                      '&.Mui-selected': {
+                        backgroundColor: 'primary.light',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'primary.main',
+                        }
+                      }
+                    }}
+                  >
+                    {feature}
+                  </ToggleButton>
                 ))}
-              </div>
-            )}
-          </div>
+              </ToggleButtonGroup>
 
-          {/* Step 6: Charm Information */}
-          <div className="form-section">
-            <h2>Property Details</h2>
-            <div className="form-group">
-              <label htmlFor="charmInfo.title">Title*</label>
-              <input
-                type="text"
-                id="charmInfo.title"
+              {formData.selectedFeatures.length > 0 && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="body2">
+                    Selected Features ({formData.selectedFeatures.length}):
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
+                    {formData.selectedFeatures.map((feature) => (
+                      <Chip
+                        key={feature}
+                        label={feature}
+                        color="primary"
+                        variant="outlined"
+                        onDelete={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            selectedFeatures: prev.selectedFeatures.filter(f => f !== feature)
+                          }));
+                        }}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              )}
+            </Paper>
+
+            {/* Step 5: Property Photos */}
+            <Paper elevation={1} sx={{ padding: 2, marginBottom: 3 }}>
+              <Typography variant="h5" gutterBottom>Property Photos</Typography>
+              <Button
+                variant="contained"
+                component="label"
+                startIcon={<PhotoCamera />}
+                sx={{ marginBottom: 2 }}
+              >
+                Upload Photos
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handlePhotoChange}
+                  hidden
+                />
+              </Button>
+
+              {formData.photos.length > 0 && (
+                <Grid container spacing={2} sx={{ mt: 2 }}>
+                  {formData.photos.map((photo, index) => (
+                    <Grid item xs={6} sm={4} md={3} key={index}>
+                      <Box sx={{ position: 'relative' }}>
+                        <img
+                          src={URL.createObjectURL(photo)}
+                          alt={`Property ${index + 1}`}
+                          style={{
+                            width: '100%',
+                            height: '120px',
+                            objectFit: 'cover',
+                            borderRadius: '4px'
+                          }}
+                        />
+                        <IconButton
+                          size="small"
+                          sx={{
+                            position: 'absolute',
+                            top: 2,
+                            right: 2,
+                            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                            }
+                          }}
+                          onClick={() => removePhoto(index)}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
+            </Paper>
+
+            {/* Step 6: Property Details */}
+            <Paper elevation={1} sx={{ padding: 2, marginBottom: 3 }}>
+              <Typography variant="h5" gutterBottom>Property Details</Typography>
+              <TextField
+                fullWidth
+                label="Title*"
+                variant="outlined"
                 name="charmInfo.title"
                 value={formData.charmInfo.title}
                 onChange={handleChange}
                 required
+                margin="normal"
               />
-            </div>
-            <div className="form-group">
-              <label htmlFor="charmInfo.description">Description*</label>
-              <textarea
-                id="charmInfo.description"
+              <TextField
+                fullWidth
+                label="Description*"
+                variant="outlined"
                 name="charmInfo.description"
                 value={formData.charmInfo.description}
                 onChange={handleChange}
-                rows="4"
+                multiline
+                rows={4}
                 required
-              ></textarea>
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="charmInfo.listingType">Listing Type*</label>
-                <select
-                  id="charmInfo.listingType"
-                  name="charmInfo.listingType"
-                  value={formData.charmInfo.listingType}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="rent">For Rent</option>
-                  <option value="sale">For Sale</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="charmInfo.price">
-                  {formData.charmInfo.listingType === 'rent' ? 'Price per day*' : 'Sale Price*'}
-                </label>
-                <input
-                  type="number"
-                  id="charmInfo.price"
-                  name="charmInfo.price"
-                  value={formData.charmInfo.price.amount}
-                  onChange={handleNumberChange}
-                  min="0"
-                  required
-                />
-              </div>
-            </div>
-          </div>
+                margin="normal"
+              />
+              <Grid container spacing={2} sx={{ mt: 1 }}>
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel id="listing-type-label">Listing Type*</InputLabel>
+                    <Select
+                      labelId="listing-type-label"
+                      label="Listing Type*"
+                      name="charmInfo.listingType"
+                      value={formData.charmInfo.listingType}
+                      onChange={handleChange}
+                      required
+                    >
+                      <MenuItem value="rent">For Rent</MenuItem>
+                      <MenuItem value="sale">For Sale</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label={formData.charmInfo.listingType === 'rent' ? 'Price per day*' : 'Sale Price*'}
+                    variant="outlined"
+                    name="charmInfo.price"
+                    type="number"
+                    value={formData.charmInfo.price.amount}
+                    onChange={handleNumberChange}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                      inputProps: { min: 0 }
+                    }}
+                    required
+                  />
+                </Grid>
+              </Grid>
+            </Paper>
 
-          {/* Step 7: Owner Information */}
-          <div className="form-section">
-            <h2>Owner Information</h2>
-            {['name', 'phone', 'email'].map((field) => (
-              <div key={field} className="form-group">
-                <label htmlFor={`owner.${field}`}>
-                  {field.charAt(0).toUpperCase() + field.slice(1)}
-                </label>
-                <input
-                  type="text"
-                  id={`owner.${field}`}
-                  name={`owner.${field}`}
-                  value={formData.owner[field]}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            ))}
-          </div>
+            {/* Step 7: Owner Information */}
+            <Paper elevation={1} sx={{ padding: 2, marginBottom: 3 }}>
+              <Typography variant="h5" gutterBottom>Owner Information</Typography>
+              <TextField
+                fullWidth
+                label="Name*"
+                variant="outlined"
+                name="owner.name"
+                value={formData.owner.name}
+                onChange={handleChange}
+                required
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Phone*"
+                variant="outlined"
+                name="owner.phone"
+                value={formData.owner.phone}
+                onChange={handleChange}
+                required
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Email*"
+                variant="outlined"
+                name="owner.email"
+                type="email"
+                value={formData.owner.email}
+                onChange={handleChange}
+                required
+                margin="normal"
+              />
+            </Paper>
 
+            {/* Form Actions */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                disabled={isLoading}
+                sx={{ minWidth: 200 }}
+              >
+                {isLoading ? 'Creating Listing...' : 'Create Listing'}
+              </Button>
 
+            </Box>
 
-          <div className="form-actions">
-            <button type="submit" className="submit-button" disabled={isLoading}>
-              {isLoading ? 'Creating Listing...' : 'Create Listing'}
-            </button>
-          </div>
-        </form>
-      </div>
+            {/* Success Popup */}
+      <Snackbar
+        open={successMessage}
+        autoHideDuration={3000} // Auto-close after 3 sec
+        onClose={() => setSuccessMessage(false)}
+      >
+        <Alert severity="success" onClose={() => setSuccessMessage(false)}>
+          Property added successfully!
+        </Alert>
+      </Snackbar>
+          </form>
+        </Paper>
+      </Box>
     </div>
   );
 };
