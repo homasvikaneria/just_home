@@ -345,44 +345,67 @@ export const deleteProperty = async (req, res) => {
     console.error("❌ Error deleting property:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-};
+};6
 
 
 export const getFilteredProperties = async (req, res) => {
   try {
-      const { search, category, minPrice, maxPrice, status, features } = req.query;
+    const { search, category, minPrice, maxPrice, status, features } = req.query;
 
-      console.log('📋 Raw Query Parameters:', { category, status, minPrice, maxPrice, features, search });
+    console.log('📋 Raw Query Parameters:', { category, status, minPrice, maxPrice, features, search });
 
-      const filter = {};
+    const filter = {};
 
-      // Category filter (case-insensitive)
-      if (category) {
-          filter.category = { $regex: new RegExp("^" + category.trim() + "$", "i") };
-          console.log('🏷️ Applying Category Filter:', category);
+    // Check if any filters are applied
+    const isFilterApplied = category || status || search || minPrice || maxPrice || features;
+
+    if (category) {
+      filter.category = category.trim(); // Case-sensitive match
+      console.log('🏷️ Applying Category Filter:', category);
+    }
+
+    if (status) {
+      filter["charmInfo.listingType"] = status.trim();
+      console.log('🔄 Applying Status Filter:', status);
+    }
+
+    if (search) {
+      filter["charmInfo.title"] = search.trim();
+      console.log('🔍 Applying Search Filter:', search);
+    }
+
+    if (minPrice || maxPrice) {
+      filter["charmInfo.price.amount"] = {};
+      if (minPrice) {
+        filter["charmInfo.price.amount"]["$gte"] = parseInt(minPrice);
       }
-
-      // Status filter (case-insensitive)
-      if (status) {
-          filter["charmInfo.listingType"] = { $regex: new RegExp("^" + status.trim() + "$", "i") };
-          console.log('🔄 Applying Status Filter:', status);
+      if (maxPrice) {
+        filter["charmInfo.price.amount"]["$lte"] = parseInt(maxPrice);
       }
+      console.log('💰 Applying Price Range Filter:', { minPrice, maxPrice });
+    }
 
-      console.log("🔍 Final Filter Before Query:", JSON.stringify(filter, null, 2));
+    console.log("🔍 Final Filter Before Query:", JSON.stringify(filter, null, 2));
 
-      // Fetch properties based on filters
-      const filteredProperties = await Property.find(filter);
-      console.log('🎯 Filtered Properties Count:', filteredProperties.length);
+    let properties;
+    
+    if (!isFilterApplied) {
+      console.log('🌍 No Filters Applied - Fetching All Properties');
+      properties = await Property.find(); // Fetch all properties when no filters are applied
+    } else {
+      properties = await Property.find(filter);
+    }
 
-      res.status(200).json({
-          properties: filteredProperties,
-          filteredPropertiesCount: filteredProperties.length,
-          appliedFilters: filter
-      });
+    console.log('🎯 Filtered Properties Count:', properties.length);
+
+    res.status(200).json({
+      properties,
+      filteredPropertiesCount: properties.length,
+      appliedFilters: filter
+    });
 
   } catch (error) {
-      console.error('❌ Filtering Error:', error);
-      res.status(500).json({ error: "Server Error", details: error.message });
+    console.error('❌ Filtering Error:', error);
+    res.status(500).json({ error: "Server Error", details: error.message });
   }
 };
-
