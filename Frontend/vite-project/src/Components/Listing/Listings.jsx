@@ -1,4 +1,4 @@
-// Frontend/vite-project/src/Components/Listing/Listings.jsx
+// just_home/Frontend/vite-project/src/Components/Listing/Listings.jsx
 import React, { useState } from "react";
 import { categories } from "../../assets/data";
 import "./Listings.css"; // Import CSS
@@ -16,7 +16,6 @@ const Listings = ({ onSelectCategory }) => {
   return (
     <section id="listing" className="listings-container">
       <h1 className="heading">Add a Property</h1>
-      <p className="Select">Select Category</p>
       <div className="categories-container">
         {categories.map((category) => (
           <div
