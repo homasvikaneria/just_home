@@ -13,7 +13,7 @@ export const createProperty = async (req, res) => {
     let {
       selectedCategory,
       category,
-      selectedFeatures,
+      selectedFeatures, // Already an array, no need to parse
       "address.street": street,
       "address.city": city,
       "address.state": state,
@@ -38,9 +38,6 @@ export const createProperty = async (req, res) => {
     bathrooms = Number(bathrooms);
     beds = Number(beds);
     priceAmount = Number(priceAmount);
-
-    // ✅ Parse selectedFeatures array
-    selectedFeatures = selectedFeatures ? JSON.parse(selectedFeatures) : [];
 
     // ✅ Construct proper nested objects
     const address = { street, city, state, country };
@@ -87,7 +84,7 @@ export const createProperty = async (req, res) => {
       category,
       address,
       essentialInfo,
-      selectedFeatures,
+      selectedFeatures, // Directly use the array without parsing
       charmInfo,
       owner,
       photos,
@@ -100,6 +97,7 @@ export const createProperty = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 
@@ -348,3 +346,43 @@ export const deleteProperty = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+export const getFilteredProperties = async (req, res) => {
+  try {
+      const { search, category, minPrice, maxPrice, status, features } = req.query;
+
+      console.log('📋 Raw Query Parameters:', { category, status, minPrice, maxPrice, features, search });
+
+      const filter = {};
+
+      // Category filter (case-insensitive)
+      if (category) {
+          filter.category = { $regex: new RegExp("^" + category.trim() + "$", "i") };
+          console.log('🏷️ Applying Category Filter:', category);
+      }
+
+      // Status filter (case-insensitive)
+      if (status) {
+          filter["charmInfo.listingType"] = { $regex: new RegExp("^" + status.trim() + "$", "i") };
+          console.log('🔄 Applying Status Filter:', status);
+      }
+
+      console.log("🔍 Final Filter Before Query:", JSON.stringify(filter, null, 2));
+
+      // Fetch properties based on filters
+      const filteredProperties = await Property.find(filter);
+      console.log('🎯 Filtered Properties Count:', filteredProperties.length);
+
+      res.status(200).json({
+          properties: filteredProperties,
+          filteredPropertiesCount: filteredProperties.length,
+          appliedFilters: filter
+      });
+
+  } catch (error) {
+      console.error('❌ Filtering Error:', error);
+      res.status(500).json({ error: "Server Error", details: error.message });
+  }
+};
+

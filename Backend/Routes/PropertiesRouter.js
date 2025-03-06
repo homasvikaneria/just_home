@@ -1,4 +1,3 @@
-// Backend/Routes/PropertiesRouter.js
 import express from "express";
 import multer from "multer";
 import {
@@ -11,6 +10,7 @@ import {
   getPropertiesByPriceRange,
   getPropertiesByCategory,
   getPropertiesByFeatures,
+  getFilteredProperties,
   getPropertyById,
   updateProperty,
   deleteProperty,
@@ -32,20 +32,24 @@ const upload = multer({ storage });
 
 // Use upload middleware for property creation
 PropertyRouter.post("/", upload.array("photos", 5), (req, res, next) => {
-  if (req.body.address) {
+  // Check if each property is a string before attempting to parse
+  if (req.body.address && typeof req.body.address === 'string') {
     req.body.address = JSON.parse(req.body.address);
   }
-  if (req.body.essentialInfo) {
+  if (req.body.essentialInfo && typeof req.body.essentialInfo === 'string') {
     req.body.essentialInfo = JSON.parse(req.body.essentialInfo);
   }
-  if (req.body.charmInfo) {
+  if (req.body.charmInfo && typeof req.body.charmInfo === 'string') {
     req.body.charmInfo = JSON.parse(req.body.charmInfo);
   }
-  if (req.body.owner) {
+  if (req.body.owner && typeof req.body.owner === 'string') {
     req.body.owner = JSON.parse(req.body.owner);
   }
+
+  // Continue to the createProperty controller
   next();
 }, createProperty);
+
 // Other Routes
 PropertyRouter.get("/", getAllProperties);
 PropertyRouter.get("/city/:city", getPropertiesByCity);
@@ -55,7 +59,8 @@ PropertyRouter.get("/listingType/:type", getPropertiesByListingType);
 PropertyRouter.get("/byPriceRange", getPropertiesByPriceRange);
 PropertyRouter.get("/category/:category", getPropertiesByCategory);
 PropertyRouter.get("/features", getPropertiesByFeatures);
-PropertyRouter.get("/byBedrooms", getPropertiesByBedrooms); // ✅ Move this **before** the ID route
+PropertyRouter.get("/byBedrooms", getPropertiesByBedrooms); 
+PropertyRouter.get("/filter", getFilteredProperties);
 
 PropertyRouter.put("/:id", upload.array("photos", 5), updateProperty);
 PropertyRouter.delete("/:id", deleteProperty);
