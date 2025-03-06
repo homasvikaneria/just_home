@@ -1,5 +1,4 @@
 // // just_home/Frontend/vite-project/src/Components/SearchResults/SearchResults.jsx
-// // Frontend/vite-project/src/Components/SearchResults/SearchResults.jsx
 // import { useEffect, useState } from "react";
 // import { useLocation, useNavigate } from "react-router-dom";
 // import { useSelector } from "react-redux";
@@ -165,40 +164,57 @@ import "./SearchResults.css";
 import SearchFilter from "../SearchFilter/SearchFilter";
 import Mainnavbar from "../Mainnav/Mainnavbar";
 
-const SearchResults = () => {
+const SearchResults = () => { // ✅ Define your component first
   const location = useLocation();
   const navigate = useNavigate();
+
+  // ✅ Define state variables
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [favoriteStatus, setFavoriteStatus] = useState({});
 
-  const queryParams = new URLSearchParams(location.search);
-  const listingType = queryParams.get("type"); // "rent", "sale", or "all"
-
-  useEffect(() => {
-    if (!listingType) return;
+  useEffect(() => { // ✅ Use useEffect inside the component
+    const queryParams = new URLSearchParams(location.search);
+    const listingType = queryParams.get("type");
+    const keyword = queryParams.get("search");
+    const category = queryParams.get("category");
+    const status = queryParams.get("status");
+    const minPrice = queryParams.get("minPrice");
+    const maxPrice = queryParams.get("maxPrice");
 
     setLoading(true);
 
-    // ✅ Check if "all" is selected, then fetch all properties
-    const url = listingType === "all"
-      ? "http://localhost:8000/properties"  // Fetch all properties
-      : `http://localhost:8000/properties/listingType/${listingType}`; // Fetch filtered properties
+    let url = "http://localhost:8000/properties/filter";
+    const params = [];
+
+    if (listingType) params.push(`listingType=${listingType}`);
+    if (keyword) params.push(`search=${keyword}`);
+    if (category) params.push(`category=${category}`);
+    if (status) params.push(`status=${status}`);
+    if (minPrice) params.push(`minPrice=${minPrice}`);
+    if (maxPrice) params.push(`maxPrice=${maxPrice}`);
+
+    if (params.length > 0) {
+      url += "?" + params.join("&");
+    }
+
+    console.log("🔍 Fetching from URL:", url); // Debugging
 
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        setProperties(Array.isArray(data) ? data : []);
+        console.log("📦 Fetched Data:", data); // Debugging
+        setProperties(Array.isArray(data.properties) ? data.properties : []);
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("❌ Fetch Error:", err);
         setError("Failed to fetch search results.");
         setLoading(false);
       });
-  }, [listingType]);
+  }, [location.search]); // ✅ Re-fetch data when filters change
 
-  // Handle heart icon toggle (visual only, not stored in DB)
   const toggleFavorite = (propertyId) => {
     setFavoriteStatus((prevState) => ({
       ...prevState,
@@ -211,71 +227,57 @@ const SearchResults = () => {
       <Mainnavbar />
       <SearchFilter />
 
-      {listingType && (
-        <div className="findhomes-wrapper">
-          <h2 className="findhomes-heading">
-            {listingType === "all" ? "All Properties" : `Properties for "${listingType}"`}
-          </h2>
-          {loading ? (
-            <p className="findhomes-loading">Fetching results...</p>
-          ) : error ? (
-            <p className="findhomes-error">{error}</p>
-          ) : properties.length > 0 ? (
-            <div className="findhomes-grid">
-              {properties.map((property) => (
-                <div key={property._id} className="findhomes-card">
-                  <div
-                    className="findhomes-image-wrapper"
-                    onClick={() => navigate(`/property/${property._id}`)}
-                  >
-                    <img
-                      src={property.photos?.[0] ? `http://localhost:8000${property.photos[0]}` : "/fallback-image.jpg"}
-                      alt={property.charmInfo?.title}
-                      className="findhomes-image"
-                    />
+      <div className="findhomes-wrapper">
+        <h2 className="findhomes-heading">Search Results</h2>
+        {loading ? (
+          <p className="findhomes-loading">Fetching results...</p>
+        ) : error ? (
+          <p className="findhomes-error">{error}</p>
+        ) : properties.length > 0 ? (
+          <div className="findhomes-grid">
+            {properties.map((property) => (
+              <div key={property._id} className="findhomes-card">
+                <div
+                  className="findhomes-image-wrapper"
+                  onClick={() => navigate(`/property/${property._id}`)}
+                >
+                  <img
+                    src={property.photos?.[0] ? `http://localhost:8000${property.photos[0]}` : "/fallback-image.jpg"}
+                    alt={property.charmInfo?.title}
+                    className="findhomes-image"
+                  />
 
-                    <div
-                      className="findhomes-wishlist"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(property._id);
-                      }}
-                    >
-                      <span className={`heart ${favoriteStatus[property._id] ? "filled" : "outline"}`}>♥</span>
-                    </div>
-                  </div>
                   <div
-                    className="findhomes-details"
-                    onClick={() => navigate(`/property/${property._id}`)}
+                    className="findhomes-wishlist"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(property._id);
+                    }}
                   >
-                    <h3 className="findhomes-title">{property.charmInfo?.title}</h3>
-                    <p className="findhomes-category">{property.category}</p>
-                    <p className="findhomes-location">
-                      📍 {property.address?.city || "Unknown City"}, {property.address?.state || "Unknown State"}
-                    </p>
-                    <p className="findhomes-cost">
-                      <span className="findhomes-price">
-                        ₹{property.charmInfo?.price.amount}
-                      </span>
-                      ({property.charmInfo?.price.currency})
-                    </p>
-                    <p className="findhomes-availability">Type: {property.charmInfo?.listingType}</p>
-                    <p className="findhomes-summary">
-                      {property.charmInfo?.description?.length > 100
-                        ? property.charmInfo.description.substring(0, 100) + "..."
-                        : property.charmInfo.description || "No description available"}
-                    </p>
+                    <span className={`heart ${favoriteStatus[property._id] ? "filled" : "outline"}`}>♥</span>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="findhomes-no-results">No listings available.</p>
-          )}
-        </div>
-      )}
+                <div className="findhomes-details">
+                  <h3 className="findhomes-title">{property.charmInfo?.title}</h3>
+                  <p className="findhomes-category">{property.category}</p>
+                  <p className="findhomes-location">
+                    📍 {property.address?.city || "Unknown City"}, {property.address?.state || "Unknown State"}
+                  </p>
+                  <p className="findhomes-cost">
+                    ₹{property.charmInfo?.price.amount} ({property.charmInfo?.price.currency})
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="findhomes-no-results">No listings available.</p>
+        )}
+      </div>
     </div>
   );
 };
 
 export default SearchResults;
+
+
