@@ -72,12 +72,14 @@ const Mainnavbar = () => {
             {isLoggedIn ? (
               <>
                 <div className="modal-header">👤 {userName}</div>
-                <Link to="/wishlist" onClick={() => setModalOpen(false)}>Wishlist</Link>
-                <Link to="/profile" onClick={() => setModalOpen(false)}>Edit Profile</Link>
-                <Link to="/your-reviews" onClick={() => setModalOpen(false)}>Your Reviews</Link>
                 <button onClick={() => { navigate("/propertyform"); setModalOpen(false); }}>
                   Add a Property
                 </button>
+                <Link to="/wishlist" onClick={() => setModalOpen(false)}>Wishlist</Link>
+                <Link to="/your-reviews" onClick={() => setModalOpen(false)}>Your Reviews</Link>
+                <Link to="/profile" onClick={() => setModalOpen(false)}>Profile</Link>
+
+
                 <button className="logout-btn" onClick={handleLogout}>Logout</button>
               </>
             ) : (
