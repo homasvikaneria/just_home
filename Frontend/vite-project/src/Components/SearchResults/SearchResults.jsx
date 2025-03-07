@@ -163,18 +163,25 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./SearchResults.css";
 import SearchFilter from "../SearchFilter/SearchFilter";
 import Mainnavbar from "../Mainnav/Mainnavbar";
+import { useSelector, useDispatch } from "react-redux";
+import { addToWishlist, removeFromWishlist, setWishlist } from "../../redux/state";
 
-const SearchResults = () => { // ✅ Define your component first
+const SearchResults = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // ✅ Define state variables
+  // Get user information from Redux store
+  const user = useSelector((state) => state.user.user);
+  const token = useSelector((state) => state.user.token);
+  const wishlist = useSelector((state) => state.user.wishlist || []);
+
+  // State variables
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [favoriteStatus, setFavoriteStatus] = useState({});
 
-  useEffect(() => { // ✅ Use useEffect inside the component
+  useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const listingType = queryParams.get("type");
     const keyword = queryParams.get("search");
@@ -199,12 +206,12 @@ const SearchResults = () => { // ✅ Define your component first
       url += "?" + params.join("&");
     }
 
-    console.log("🔍 Fetching from URL:", url); // Debugging
+    console.log("🔍 Fetching from URL:", url);
 
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        console.log("📦 Fetched Data:", data); // Debugging
+        console.log("📦 Fetched Data:", data);
         setProperties(Array.isArray(data.properties) ? data.properties : []);
         setLoading(false);
       })
@@ -213,13 +220,88 @@ const SearchResults = () => { // ✅ Define your component first
         setError("Failed to fetch search results.");
         setLoading(false);
       });
-  }, [location.search]); // ✅ Re-fetch data when filters change
+  }, [location.search]);
 
-  const toggleFavorite = (propertyId) => {
-    setFavoriteStatus((prevState) => ({
-      ...prevState,
-      [propertyId]: !prevState[propertyId],
-    }));
+  // Fetch user's wishlist if logged in
+  useEffect(() => {
+    if (user && token) {
+      fetch(`http://localhost:8000/users/${user._id}/wishlist`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then((data) => {
+          if (data.wishList) {
+            // Extract just the IDs from wishList objects
+            const wishlistIds = data.wishList.map((item) => 
+              typeof item === 'string' ? item : item._id
+            );
+            console.log("📋 Fetched Wishlist:", wishlistIds);
+            dispatch(setWishlist(wishlistIds));
+          }
+        })
+        .catch((err) => {
+          console.error("❌ Wishlist Fetch Error:", err);
+        });
+    }
+  }, [user, token, dispatch]);
+
+  // Toggle property in wishlist
+  const toggleWishlist = (propertyId, event) => {
+    event.stopPropagation(); // Prevent navigation when clicking the like button
+    
+    // If user is not logged in, redirect to register page
+    if (!user || !token) {
+      navigate("/register");
+      return;
+    }
+
+    // Determine if we're adding or removing
+    const isInWishlist = wishlist.includes(propertyId);
+    
+    // Update Redux state optimistically
+    if (isInWishlist) {
+      dispatch(removeFromWishlist(propertyId));
+    } else {
+      dispatch(addToWishlist(propertyId));
+    }
+
+    // Determine API endpoint based on action
+    const endpoint = `http://localhost:8000/users/${user._id}/wishlist/${propertyId}`;
+    const method = isInWishlist ? "DELETE" : "POST";
+
+    // Send request to backend
+    fetch(endpoint, {
+      method: method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log("✅ Wishlist Updated:", data);
+      })
+      .catch((err) => {
+        console.error("❌ Wishlist Update Error:", err);
+        // Revert optimistic update on error
+        if (isInWishlist) {
+          dispatch(addToWishlist(propertyId));
+        } else {
+          dispatch(removeFromWishlist(propertyId));
+        }
+      });
   };
 
   return (
@@ -249,12 +331,9 @@ const SearchResults = () => { // ✅ Define your component first
 
                   <div
                     className="findhomes-wishlist"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavorite(property._id);
-                    }}
+                    onClick={(e) => toggleWishlist(property._id, e)}
                   >
-                    <span className={`heart ${favoriteStatus[property._id] ? "filled" : "outline"}`}>♥</span>
+                    <span className={`heart ${wishlist.includes(property._id) ? "filled" : "outline"}`}>♥</span>
                   </div>
                 </div>
                 <div className="findhomes-details">
@@ -279,5 +358,3 @@ const SearchResults = () => { // ✅ Define your component first
 };
 
 export default SearchResults;
-
-
