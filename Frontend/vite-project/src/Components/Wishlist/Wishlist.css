@@ -1,3 +1,4 @@
+/* just_home/Frontend/vite-project/src/Components/Wishlist/Wishlist.css */
 /* Frontend/vite-project/src/Components/Wishlist/Wishlist.css */
 /* Wishlist Wrapper */
 .findhomes-wrapper {
@@ -138,3 +139,18 @@
     color: #777;
     margin-top: 20px;
 }
+.wishlist-like-btn {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .wishlist-like-btn:hover {
+    background: #cc0000;
+  }
+  
