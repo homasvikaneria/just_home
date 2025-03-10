@@ -1,50 +1,56 @@
-/* just_home/Frontend/vite-project/src/Components/Mainnav/Mainnavbar.css */
-/* Navbar Container */
-
-*{
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* Frontend/vite-project/src/Components/Mainnav/Mainnavbar.css */
+/* General Styles */
+* {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
+
+/* Navbar Container */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #1B4F5C;
-    padding: 10px 20px;
+    padding: 12px 20px;
     color: white;
     width: 100%;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 1000;
+    transition: background-color 0.3s ease;
 }
 
-/* Left: Logo & Brand Name */
+/* Navbar Brand (Logo & Name) */
 .navbar-left {
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .logo {
-    height: 30px; /* Adjust logo size */
+    height: 35px;
     margin-right: 10px;
 }
 
 .brand-name {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: bold;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
 }
 
-/* Center: Navigation Links */
+/* Navigation Links */
 .nav-links {
     display: flex;
-    gap: 25px;
+    gap: 20px;
 }
 
 .nav-links a {
     text-decoration: none;
     color: white;
-    font-size: 20px;
+    font-size: 18px;
     transition: color 0.3s ease;
 }
 
@@ -52,30 +58,87 @@
     color: #f4c542;
 }
 
-/* Right: User Icon */
+/* User Profile Section */
 .user {
     display: flex;
     align-items: center;
 }
 
-.user-button {
-    background: none;
-    border: none;
-    cursor: pointer;
+.user .MuiIconButton-root {
+    padding: 0;
 }
-/* User Icon Hover Effect */
-.user-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 30px;
+
+.user .MuiAvatar-root {
+    width: 42px;
+    height: 42px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.user-icon:hover {
-    transform: scale(1.1); /* Slightly enlarges the icon */
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5); /* Adds a glow effect */
+.user .MuiAvatar-root:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
     cursor: pointer;
+}
+
+/* MUI Drawer (Sidebar) */
+.MuiDrawer-paper {
+    width: 260px;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: white;
+}
+
+/* Fix for List Items */
+.MuiDrawer-paper * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Drawer Profile Section */
+.drawer-profile {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.drawer-profile .MuiAvatar-root {
+    width: 60px;
+    height: 60px;
+    margin: auto;
+}
+
+.drawer-profile h3 {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #1B4F5C;
+}
+
+/* Drawer List Items */
+.drawer-list {
+    flex-grow: 1;
+}
+
+.MuiListItem-root {
+    padding: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.MuiListItem-root:hover {
+    background: #f4c542;
+    color: white;
+}
+
+.MuiListItem-root[style*="color: red"] {
+    color: red;
+    font-weight: bold;
+}
+
+/* Ensures Logout Button is at Bottom */
+.logout-container {
+    margin-top: auto;
 }
 
 /* Responsive Design */
@@ -83,338 +146,33 @@
     .navbar {
         flex-direction: column;
         align-items: center;
+        padding: 15px;
     }
 
     .nav-links {
         flex-direction: column;
         text-align: center;
+        gap: 15px;
     }
-}
 
-/* General Hover Transition */
-.nav-links a,
+    .nav-links a {
+        font-size: 16px;
+    }
 
-.user-icon {
-    transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-}
+    .logo {
+        height: 30px;
+    }
 
-/* Navbar Links Hover Effect */
-.nav-links a:hover {
-    color: #f4c542; /* Changes text color */
-    transform: scale(1.0); /* Slightly enlarges */
-    text-shadow: 0px 0px 5px rgba(244, 197, 66, 0.8); /* Adds a glow effect */
-}
+    .brand-name {
+        font-size: 1.2rem;
+    }
 
-/* Brand Name Hover Effect */
+    .user .MuiAvatar-root {
+        width: 38px;
+        height: 38px;
+    }
 
-
-/* User Icon Hover Effect */
-.user-icon:hover {
-    transform: scale(1.0); /* Slightly enlarges the icon */
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5); /* Adds a glow effect */
-    cursor: pointer;
-}
-/* Navbar Left: Logo & Brand */
-.navbar-left {
-    display: flex;
-    align-items: center;
-    text-decoration: none; /* Removes underline */
-    color: white; /* Ensures text is white */
-}
-
-/* Remove underline on hover as well */
-.navbar-left:hover {
-    text-decoration: none;
-}
-
-/* Ensure the brand name inherits the correct color */
-.brand-name {
-    font-size: 1.3rem;
-    font-weight: bold;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: white; /* Make sure it's white */
-}
-
-/* Dropdown Menu */
-.dropdown-menu {
-    position: absolute;
-    top: 60px; /* Adjust based on your navbar height */
-    right: 10px; /* Align it properly */
-    background-color: #fff; /* Set background color */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    min-width: 150px;
-    z-index: 1000; /* Ensure it appears above other elements */
-}
-
-/* Dropdown Links */
-.dropdown-menu a,
-.dropdown-menu button {
-    text-decoration: none;
-    color: #333;
-    padding: 10px;
-    display: block;
-    text-align: left;
-    border: none;
-    background: none;
-    width: 100%;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
-}
-
-.dropdown-menu a:hover,
-.dropdown-menu button:hover {
-    background: #f4c542; /* Highlight on hover */
-    color: #fff;
-    border-radius: 5px;
-}
-.dropdown-menu {
-    position: absolute;
-    top: 50px;
-    right: 0;
-    background: white;
-    border: 1px solid #ddd;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    min-width: 150px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .dropdown-menu a, .dropdown-menu button {
-    padding: 8px;
-    text-decoration: none;
-    color: #333;
-    background: none;
-    border: none;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-  }
-  
-  .dropdown-menu a:hover, .dropdown-menu button:hover {
-    background: #f1f1f1;
-  }
-  
-  .logout-btn {
-    color: red;
-    font-weight: bold;
-  }
-
-  /* Modal Overlay */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5); /* Dark transparent background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-}
-
-/* Modal Box */
-.modal-content {
-    background: white;
-    width: 300px;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-}
-
-/* Close Button */
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 20px;
-    cursor: pointer;
-    color: #333;
-}
-
-/* Modal Header */
-.modal-header {
-    font-size: 18px;
-    font-weight: bold;
-    color: #1B4F5C;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #f4c542;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-/* Modal Links & Buttons */
-.modal-content a,
-.modal-content button {
-    text-decoration: none;
-    color: #333;
-    font-size: 16px;
-    padding: 12px;
-    display: block;
-    width: 100%;
-    text-align: center;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background 0.3s ease, color 0.3s ease;
-}
-
-/* Hover Effect */
-.modal-content a:hover,
-.modal-content button:hover {
-    background: #f4c542;
-    color: white;
-    border-radius: 5px;
-}
-
-/* Logout Button */
-.logout-btn {
-    color: red;
-    font-weight: bold;
-}
-
-
-/* Navbar Container */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #1B4F5C;
-    padding: 10px 20px;
-    color: white;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-}
-
-/* Logo & Brand */
-.navbar-left {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-.logo {
-    height: 30px;
-    margin-right: 10px;
-}
-
-.brand-name {
-    font-size: 1.3rem;
-    font-weight: bold;
-}
-
-/* Navigation Links */
-.nav-links {
-    display: flex;
-    gap: 25px;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: white;
-    font-size: 20px;
-    transition: color 0.3s ease;
-}
-
-.nav-links a:hover {
-    color: #f4c542;
-}
-
-/* User Profile Icon */
-.user-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-.user-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.user-icon:hover {
-    transform: scale(1.1);
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
-}
-
-/* --- MODAL STYLES --- */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1100;
-}
-
-.modal-content {
-    background: white;
-    padding: 20px;
-    width: 250px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    position: relative;
-}
-
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.modal-header {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
-
-.modal-content a,
-.modal-content button {
-    display: block;
-    padding: 10px;
-    margin-top: 10px;
-    text-decoration: none;
-    color: #333;
-    background: none;
-    border: none;
-    width: 100%;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    text-align: center;
-}
-
-.modal-content a:hover,
-.modal-content button:hover {
-    background: #f4c542;
-    color: #fff;
-    border-radius: 5px;
-}
-
-.logout-btn {
-    color: red;
-    font-weight: bold;
+    .MuiDrawer-paper {
+        width: 240px;
+    }
 }

@@ -45,7 +45,8 @@ const EditProfile = ({ userId }) => {
         }
 
         try {
-            const response = await axios.put(`http://localhost:5000/users/update/${userId}`, formDataToSend, {
+            const response = await axios.put(`https://just-home.onrender.com/users/update/${userId}
+`, formDataToSend, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 

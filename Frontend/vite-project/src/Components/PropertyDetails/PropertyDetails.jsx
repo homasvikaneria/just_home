@@ -12,7 +12,7 @@ const PropertyDetails = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/properties/${id}`)
+    fetch(`https://just-home.onrender.com/properties/${id}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Property not found");

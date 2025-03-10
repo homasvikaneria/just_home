@@ -11,7 +11,7 @@
 
 .lp-bgc {
     width: 100vw;  /* Full width of the viewport */
-    height: 100vh; /* Full height of the viewport */
+    height: 97vh; /* Full height of the viewport */
     object-fit: cover; /* Ensures the image covers the screen without distortion */
     position: absolute; /* Positions the image */
     top: 0;

@@ -390,6 +390,7 @@ export const getUserWishlist = async (req, res) => {
         const user = await Users.findById(userId).populate({ path: "wishList", model: Property });
 
         if (!user) return res.status(404).json({ message: "User not found", wishList: [] });
+        console.log("✅ User Wishlist Data:", user.wishList); // ✅ Debugging
 
         res.json({ wishList: user.wishList || [] });
     } catch (error) {

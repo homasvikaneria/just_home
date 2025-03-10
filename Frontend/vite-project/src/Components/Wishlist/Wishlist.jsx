@@ -1,4 +1,4 @@
-// just_home/Frontend/vite-project/src/Components/Wishlist/Wishlist.jsx
+// Frontend/vite-project/src/Components/Wishlist/Wishlist.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,45 +10,52 @@ import "./Wishlist.css";
 const Wishlist = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
-    // ✅ Get wishlist from Redux instead of local state
+
     const user = useSelector((state) => state.user.user);
     const token = useSelector((state) => state.user.token);
     const wishlist = useSelector((state) => state.user.wishlist || []);
 
+    const [wishlistProperties, setWishlistProperties] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // ✅ Fetch wishlist and update Redux state
-    const fetchWishlist = async () => {
-        if (!user?._id) return;
-
-        const url = `http://localhost:8000/api/users/${user._id}/wishlist`;
-        console.log("🔍 Fetching wishlist from:", url);
+    // ✅ Fetch full details for all wishlist properties
+    const fetchWishlistProperties = async () => {
+        if (!user?._id || wishlist.length === 0) {
+            setWishlistProperties([]);
+            setLoading(false);
+            return;
+        }
 
         setLoading(true);
+
         try {
-            const response = await fetch(url, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!response.ok) throw new Error(`Server error: ${response.status}`);
+            const responses = await Promise.all(
+                wishlist.map((propertyId) =>
+                    fetch(`https://just-home.onrender.com/properties/${propertyId}
+`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    })
+                        .then((res) => res.json())
+                        .catch((err) => console.error("Error fetching property:", err))
+                )
+            );
 
-            const data = await response.json();
-            console.log("✅ Wishlist from backend:", data);
-
-            // ✅ Ensure wishlist contains only property IDs
-            dispatch(setWishlist(data.wishList.map(item => item._id)));
+            setWishlistProperties(responses.filter(Boolean)); // Remove any failed fetches
         } catch (error) {
-            console.error("❌ Error fetching wishlist:", error.message);
+            console.error("Error fetching wishlist properties:", error);
         }
+
         setLoading(false);
     };
 
     useEffect(() => {
-        fetchWishlist();
-    }, [user?._id]);
+        fetchWishlistProperties();
+    }, [wishlist]);
 
-    // ✅ Toggle wishlist using Redux
-    const toggleWishlist = async (propertyId) => {
+    // ✅ Toggle wishlist functionality
+    const toggleWishlist = async (propertyId, e) => {
+        e.stopPropagation();
+
         if (!user?._id) {
             navigate("/register");
             return;
@@ -56,7 +63,8 @@ const Wishlist = () => {
 
         const isInWishlist = wishlist.includes(propertyId);
         const method = isInWishlist ? "DELETE" : "POST";
-        const endpoint = `http://localhost:8000/users/${user._id}/wishlist/${propertyId}`;
+        const endpoint = `https://just-home.onrender.com/users/${user._id}/wishlist/${propertyId}
+`;
 
         try {
             const response = await fetch(endpoint, {
@@ -68,19 +76,16 @@ const Wishlist = () => {
             });
 
             if (response.ok) {
-                console.log("✅ Wishlist updated successfully");
-
-                // ✅ Update Redux state
                 if (isInWishlist) {
                     dispatch(removeFromWishlist(propertyId));
                 } else {
                     dispatch(addToWishlist(propertyId));
                 }
             } else {
-                console.error("❌ Failed to update wishlist:", await response.text());
+                console.error("Failed to update wishlist:", await response.text());
             }
         } catch (error) {
-            console.error("❌ Error updating wishlist:", error);
+            console.error("Error updating wishlist:", error);
         }
     };
 
@@ -92,31 +97,36 @@ const Wishlist = () => {
 
                 {loading ? (
                     <p className="findhomes-loading">Loading wishlist...</p>
-                ) : wishlist.length > 0 ? (
+                ) : wishlistProperties.length > 0 ? (
                     <div className="findhomes-grid">
-                        {wishlist.map((propertyId) => (
-                            <div key={propertyId} className="findhomes-card" style={{ cursor: "pointer" }}>
-                                <div className="findhomes-image-wrapper" onClick={() => navigate(`/property/${propertyId}`)}>
+                        {wishlistProperties.map((property) => (
+                            <div key={property._id} className="findhomes-card">
+                                <div
+                                    className="findhomes-image-wrapper"
+                                    onClick={() => navigate(`/property/${property._id}`)}
+                                >
                                     <img
-                                        src={`http://localhost:8000/properties/${propertyId}/image`} // Placeholder for actual image URL
-                                        alt="Property"
+                                        src={property.photos?.[0] ? `https://just-home.onrender.com${property.photos[0]}
+` : "/fallback-image.jpg"}
+                                        alt={property.charmInfo?.title || "Property"}
                                         className="findhomes-image"
                                     />
                                     <div
                                         className="findhomes-wishlist"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleWishlist(propertyId);
-                                        }}
+                                        onClick={(e) => toggleWishlist(property._id, e)}
                                     >
-                                        <span className={`heart ${wishlist.includes(propertyId) ? "filled" : "outline"}`}>♥</span>
+                                        <span className={`heart ${wishlist.includes(property._id) ? "filled" : "outline"}`}>♥</span>
                                     </div>
                                 </div>
-                                <div className="findhomes-details" onClick={() => navigate(`/property/${propertyId}`)}>
-                                    <h3 className="findhomes-title">Property {propertyId}</h3> {/* Replace with actual title */}
-                                    <p className="findhomes-location">📍 Location Info</p> {/* Replace with actual location */}
-                                    <p className="findhomes-cost">$XXX / Month</p> {/* Replace with actual price */}
-                                    <p className="findhomes-availability">Available</p> {/* Replace with actual status */}
+                                <div className="findhomes-details">
+                                    <h3 className="findhomes-title">{property.charmInfo?.title}</h3>
+                                    <p className="findhomes-category">{property.category}</p>
+                                    <p className="findhomes-location">
+                                        📍 {property.address?.city || "Unknown City"}, {property.address?.state || "Unknown State"}
+                                    </p>
+                                    <p className="findhomes-cost">
+                                        ₹{property.charmInfo?.price.amount} ({property.charmInfo?.price.currency})
+                                    </p>
                                 </div>
                             </div>
                         ))}
