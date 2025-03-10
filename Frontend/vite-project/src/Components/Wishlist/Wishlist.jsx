@@ -10,7 +10,7 @@ import "./Wishlist.css";
 const Wishlist = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
+
     const user = useSelector((state) => state.user.user);
     const token = useSelector((state) => state.user.token);
     const wishlist = useSelector((state) => state.user.wishlist || []);
@@ -27,15 +27,16 @@ const Wishlist = () => {
         }
 
         setLoading(true);
-        
+
         try {
             const responses = await Promise.all(
                 wishlist.map((propertyId) =>
-                    fetch(`http://localhost:8000/properties/${propertyId}`, {
+                    fetch(`https://just-home.onrender.com/properties/${propertyId}
+`, {
                         headers: { Authorization: `Bearer ${token}` },
                     })
-                    .then((res) => res.json())
-                    .catch((err) => console.error("Error fetching property:", err))
+                        .then((res) => res.json())
+                        .catch((err) => console.error("Error fetching property:", err))
                 )
             );
 
@@ -62,7 +63,8 @@ const Wishlist = () => {
 
         const isInWishlist = wishlist.includes(propertyId);
         const method = isInWishlist ? "DELETE" : "POST";
-        const endpoint = `http://localhost:8000/users/${user._id}/wishlist/${propertyId}`;
+        const endpoint = `https://just-home.onrender.com/users/${user._id}/wishlist/${propertyId}
+`;
 
         try {
             const response = await fetch(endpoint, {
@@ -104,7 +106,8 @@ const Wishlist = () => {
                                     onClick={() => navigate(`/property/${property._id}`)}
                                 >
                                     <img
-                                        src={property.photos?.[0] ? `http://localhost:8000${property.photos[0]}` : "/fallback-image.jpg"}
+                                        src={property.photos?.[0] ? `https://just-home.onrender.com${property.photos[0]}
+` : "/fallback-image.jpg"}
                                         alt={property.charmInfo?.title || "Property"}
                                         className="findhomes-image"
                                     />

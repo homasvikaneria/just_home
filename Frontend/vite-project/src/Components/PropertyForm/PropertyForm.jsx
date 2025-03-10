@@ -1,3 +1,4 @@
+// Frontend/vite-project/src/Components/PropertyForm/PropertyForm.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import Listings from '../Listing/Listings';
@@ -207,7 +208,7 @@ const PropertyForm = () => {
 
       // Send POST request with FormData
       const response = await axios.post(
-        'http://localhost:8000/properties',
+        'https://just-home.onrender.com/properties',
         submissionData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );

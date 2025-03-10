@@ -1,3 +1,4 @@
+// Frontend/vite-project/src/Components/SearchResults/SearchResults.jsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./SearchResults.css";
@@ -32,7 +33,7 @@ const SearchResults = () => {
 
     setLoading(true);
 
-    let url = "http://localhost:8000/properties/filter";
+    let url = "https://just-home.onrender.com/properties/filter";
     const params = [];
 
     if (listingType) params.push(`listingType=${listingType}`);
@@ -65,7 +66,8 @@ const SearchResults = () => {
   // Fetch user's wishlist if logged in
   useEffect(() => {
     if (user && token) {
-      fetch(`http://localhost:8000/users/${user._id}/wishlist`, {
+      fetch(`https://just-home.onrender.com/users/${user._id}/wishlist
+`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -79,7 +81,7 @@ const SearchResults = () => {
         .then((data) => {
           if (data.wishList) {
             // Extract just the IDs from wishList objects
-            const wishlistIds = data.wishList.map((item) => 
+            const wishlistIds = data.wishList.map((item) =>
               typeof item === 'string' ? item : item._id
             );
             console.log("📋 Fetched Wishlist:", wishlistIds);
@@ -95,7 +97,7 @@ const SearchResults = () => {
   // Toggle property in wishlist
   const toggleWishlist = (propertyId, event) => {
     event.stopPropagation(); // Prevent navigation when clicking the like button
-    
+
     // If user is not logged in, redirect to register page
     if (!user || !token) {
       navigate("/register");
@@ -104,7 +106,7 @@ const SearchResults = () => {
 
     // Determine if we're adding or removing
     const isInWishlist = wishlist.includes(propertyId);
-    
+
     // Update Redux state optimistically
     if (isInWishlist) {
       dispatch(removeFromWishlist(propertyId));
@@ -113,7 +115,8 @@ const SearchResults = () => {
     }
 
     // Determine API endpoint based on action
-    const endpoint = `http://localhost:8000/users/${user._id}/wishlist/${propertyId}`;
+    const endpoint = `https://just-home.onrender.com/users/${user._id}/wishlist/${propertyId}
+`;
     const method = isInWishlist ? "DELETE" : "POST";
 
     // Send request to backend
@@ -164,7 +167,8 @@ const SearchResults = () => {
                   onClick={() => navigate(`/property/${property._id}`)}
                 >
                   <img
-                    src={property.photos?.[0] ? `http://localhost:8000${property.photos[0]}` : "/fallback-image.jpg"}
+                    src={property.photos?.[0] ? `https://just-home.onrender.com${property.photos[0]}
+` : "/fallback-image.jpg"}
                     alt={property.charmInfo?.title}
                     className="findhomes-image"
                   />

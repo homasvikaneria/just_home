@@ -63,7 +63,7 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/users/register", {
+      const response = await fetch("https://just-home.onrender.com/users/register", {
         method: "POST",
         body: data,
       });
