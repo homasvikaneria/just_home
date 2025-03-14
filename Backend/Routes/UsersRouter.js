@@ -1,27 +1,5 @@
-// // just_home/Backend/Routes/UsersRouter.js
-// import express from "express";
-// import { 
-//   getUsers, 
-//   getUserByEmail, 
-//   addUser, 
-//   loginUser, 
-//   getUserWishlist, 
-//   removeFromWishlist,
-//   updateUserProfile, 
-//   upload 
-// } from "../Controller/UsersController.js";
+// Backend/Routes/UsersRouter.js
 
-// const UsersRouter = express.Router();
-
-// UsersRouter.get("/", getUsers);
-// UsersRouter.get("/email/:emailId", getUserByEmail);
-// UsersRouter.post("/register", upload.single("profileImage"), addUser);
-// UsersRouter.post("/login", loginUser);
-// UsersRouter.get("/:userId/wishlist", getUserWishlist);
-// UsersRouter.delete("/:userId/wishlist/:propertyId", removeFromWishlist);
-// UsersRouter.put("/update/:userId", upload.single("profileImage"), updateUserProfile);
-
-// export default UsersRouter;
 
 import express from "express";
 import { 

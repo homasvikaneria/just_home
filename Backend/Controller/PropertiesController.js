@@ -352,26 +352,27 @@ export const getFilteredProperties = async (req, res) => {
   try {
     const { search, category, minPrice, maxPrice, status, features } = req.query;
 
-    console.log('📋 Raw Query Parameters:', { category, status, minPrice, maxPrice, features, search });
+    console.log("📥 Received Query Params:", req.query);
 
     const filter = {};
 
-    // Check if any filters are applied
-    const isFilterApplied = category || status || search || minPrice || maxPrice || features;
-
     if (category) {
-      filter.category = category.trim(); // Case-sensitive match
-      console.log('🏷️ Applying Category Filter:', category);
+      filter.category = category.trim();
+      console.log("🏷️ Applying Category Filter:", category);
     }
 
     if (status) {
       filter["charmInfo.listingType"] = status.trim();
-      console.log('🔄 Applying Status Filter:', status);
+      console.log("🔄 Applying Status Filter:", status);
     }
 
     if (search) {
-      filter["charmInfo.title"] = search.trim();
-      console.log('🔍 Applying Search Filter:', search);
+      filter["$or"] = [
+        { "address.city": new RegExp(search.trim(), "i") },
+        { "address.state": new RegExp(search.trim(), "i") },
+        { "address.country": new RegExp(search.trim(), "i") }
+      ];
+      console.log("🌍 Applying Location Search Filter:", search);
     }
 
     if (minPrice || maxPrice) {
@@ -382,30 +383,23 @@ export const getFilteredProperties = async (req, res) => {
       if (maxPrice) {
         filter["charmInfo.price.amount"]["$lte"] = parseInt(maxPrice);
       }
-      console.log('💰 Applying Price Range Filter:', { minPrice, maxPrice });
+      console.log("💰 Applying Price Range Filter:", { minPrice, maxPrice });
     }
 
-    console.log("🔍 Final Filter Before Query:", JSON.stringify(filter, null, 2));
+    console.log("🔍 Final Query Sent to MongoDB:", JSON.stringify(filter, null, 2));
 
-    let properties;
-    
-    if (!isFilterApplied) {
-      console.log('🌍 No Filters Applied - Fetching All Properties');
-      properties = await Property.find(); // Fetch all properties when no filters are applied
-    } else {
-      properties = await Property.find(filter);
-    }
+    let properties = await Property.find(filter);
 
-    console.log('🎯 Filtered Properties Count:', properties.length);
+    console.log("📌 Found Properties:", properties.length);
 
     res.status(200).json({
       properties,
       filteredPropertiesCount: properties.length,
-      appliedFilters: filter
+      appliedFilters: req.query // Send back received filters
     });
 
   } catch (error) {
-    console.error('❌ Filtering Error:', error);
+    console.error("❌ Filtering Error:", error);
     res.status(500).json({ error: "Server Error", details: error.message });
   }
 };

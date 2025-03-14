@@ -1,35 +1,32 @@
-// just_home/Frontend/vite-project/src/Components/SearchFilter/SearchFilter.jsx
+// Frontend/vite-project/src/Components/SearchFilter/SearchFilter.jsx
 import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { Slider } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./SearchFilter.css";
 
 const SearchFilter = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [keyword, setKeyword] = useState("");
-  const [status, setStatus] = useState("");
-  const [category, setCategory] = useState("");
-  const [priceRange, setPriceRange] = useState([500, 500000]);
+  const params = new URLSearchParams(location.search);
+  const [keyword, setKeyword] = useState(params.get("search") || "");
+  const [status, setStatus] = useState(params.get("status") || "");
+  const [category, setCategory] = useState(params.get("category") || "");
+  const [priceRange, setPriceRange] = useState([
+    parseInt(params.get("minPrice") || 500),
+    parseInt(params.get("maxPrice") || 500000),
+  ]);
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-
     if (keyword) params.set("search", keyword);
     if (status) params.set("status", status);
     if (category) params.set("category", category);
-    if (priceRange) {
-      params.set("minPrice", priceRange[0]);
-      params.set("maxPrice", priceRange[1]);
-    }
+    params.set("minPrice", priceRange[0]);
+    params.set("maxPrice", priceRange[1]);
 
-    // ✅ Update the URL instead of fetching
-    const queryString = params.toString();
-    console.log("Navigating to:", `/search-results?${queryString}`); // ✅ Debugging
-    navigate(`/search-results?${queryString}`);
-
-
+    navigate(`/search-results?${params.toString()}`);
   };
 
   return (

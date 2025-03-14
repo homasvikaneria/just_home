@@ -1,5 +1,6 @@
+// Frontend/vite-project/src/Components/HomePage/HomePage.jsx
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link,useLocation } from "react-router-dom";
 import axios from "axios";
 import { FaAmazon, FaSpotify} from "react-icons/fa";
 import "./HomePage.css";
@@ -56,6 +57,29 @@ const HomePage = () => {
     }
   };
 
+
+  const [properties, setProperties] = useState([]);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchQuery = queryParams.get("query");
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        let url = "http://localhost:8000/properties";
+        if (searchQuery) {
+          url += `?search=${searchQuery}`;
+        }
+        const response = await axios.get(url);
+        setProperties(response.data);
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      }
+    };
+
+    fetchProperties();
+  }, [searchQuery]);
+
   const handleGetStarted = () => {
     if (isAuthenticated()) {
       navigate("/propertyform");
@@ -63,6 +87,8 @@ const HomePage = () => {
       navigate("/register");
     }
   };
+
+  
 
   return (
     <div>
