@@ -1,3 +1,4 @@
+// Backend/Routes/PropertiesRouter.js
 import express from "express";
 import multer from "multer";
 import {
@@ -14,7 +15,7 @@ import {
   getPropertyById,
   updateProperty,
   deleteProperty,
-  getPropertiesByBedrooms
+  getPropertiesByBedrooms,
 } from "../Controller/PropertiesController.js";
 
 // Initialize Express Router
@@ -62,6 +63,7 @@ PropertyRouter.get("/features", getPropertiesByFeatures);
 PropertyRouter.get("/byBedrooms", getPropertiesByBedrooms); 
 PropertyRouter.get("/filter", getFilteredProperties);
 
+
 PropertyRouter.put("/:id", upload.array("photos", 5), updateProperty);
 PropertyRouter.delete("/:id", deleteProperty);
 
@@ -69,3 +71,6 @@ PropertyRouter.delete("/:id", deleteProperty);
 PropertyRouter.get("/:id", getPropertyById); // Catch-all should be last
 
 export default PropertyRouter;
+
+
+
