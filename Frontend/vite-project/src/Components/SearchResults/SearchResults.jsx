@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./SearchResults.css";
 import SearchFilter from "../SearchFilter/SearchFilter";
 import Mainnavbar from "../Mainnav/Mainnavbar";
+import SearchBar from "../SearchBar/SearchBar"; // ✅ Added SearchBar
 import { useSelector, useDispatch } from "react-redux";
 import { addToWishlist, removeFromWishlist, setWishlist } from "../../redux/state";
 
@@ -12,16 +13,17 @@ const SearchResults = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Get user information from Redux store
+  // Redux state
   const user = useSelector((state) => state.user.user);
   const token = useSelector((state) => state.user.token);
   const wishlist = useSelector((state) => state.user.wishlist || []);
 
-  // State variables
+  // Component state
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch properties based on search & filters
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const listingType = queryParams.get("type");
@@ -66,8 +68,7 @@ const SearchResults = () => {
   // Fetch user's wishlist if logged in
   useEffect(() => {
     if (user && token) {
-      fetch(`https://just-home.onrender.com/users/${user._id}/wishlist
-`, {
+      fetch(`https://just-home.onrender.com/users/${user._id}/wishlist`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -80,9 +81,8 @@ const SearchResults = () => {
         })
         .then((data) => {
           if (data.wishList) {
-            // Extract just the IDs from wishList objects
             const wishlistIds = data.wishList.map((item) =>
-              typeof item === 'string' ? item : item._id
+              typeof item === "string" ? item : item._id
             );
             console.log("📋 Fetched Wishlist:", wishlistIds);
             dispatch(setWishlist(wishlistIds));
@@ -98,28 +98,22 @@ const SearchResults = () => {
   const toggleWishlist = (propertyId, event) => {
     event.stopPropagation(); // Prevent navigation when clicking the like button
 
-    // If user is not logged in, redirect to register page
     if (!user || !token) {
       navigate("/register");
       return;
     }
 
-    // Determine if we're adding or removing
     const isInWishlist = wishlist.includes(propertyId);
 
-    // Update Redux state optimistically
     if (isInWishlist) {
       dispatch(removeFromWishlist(propertyId));
     } else {
       dispatch(addToWishlist(propertyId));
     }
 
-    // Determine API endpoint based on action
-    const endpoint = `https://just-home.onrender.com/users/${user._id}/wishlist/${propertyId}
-`;
+    const endpoint = `https://just-home.onrender.com/users/${user._id}/wishlist/${propertyId}`;
     const method = isInWishlist ? "DELETE" : "POST";
 
-    // Send request to backend
     fetch(endpoint, {
       method: method,
       headers: {
@@ -138,7 +132,6 @@ const SearchResults = () => {
       })
       .catch((err) => {
         console.error("❌ Wishlist Update Error:", err);
-        // Revert optimistic update on error
         if (isInWishlist) {
           dispatch(addToWishlist(propertyId));
         } else {
@@ -154,6 +147,7 @@ const SearchResults = () => {
 
       <div className="findhomes-wrapper">
         <h2 className="findhomes-heading">Search Results</h2>
+        
         {loading ? (
           <p className="findhomes-loading">Fetching results...</p>
         ) : error ? (
@@ -167,8 +161,7 @@ const SearchResults = () => {
                   onClick={() => navigate(`/property/${property._id}`)}
                 >
                   <img
-                    src={property.photos?.[0] ? `https://just-home.onrender.com${property.photos[0]}
-` : "/fallback-image.jpg"}
+                    src={property.photos?.[0] ? `https://just-home.onrender.com${property.photos[0]}` : "/fallback-image.jpg"}
                     alt={property.charmInfo?.title}
                     className="findhomes-image"
                   />
