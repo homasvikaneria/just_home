@@ -34,22 +34,41 @@ const Login = () => {
     try {
       const response = await fetch("https://just-home.onrender.com/users/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
-        throw new Error("Invalid email or password");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Invalid email or password");
       }
 
       const loggedIn = await response.json();
 
       if (loggedIn?.user && loggedIn?.token) {
-        dispatch(setLogin({ user: loggedIn.user, token: loggedIn.token }));
+        // Store complete user data and token
+        const userData = {
+          ...loggedIn.user,
+          isAuthenticated: true,
+          lastLogin: new Date().toISOString()
+        };
+        
+        // Store with proper user ID format
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('token', loggedIn.token);
+        localStorage.setItem('userId', loggedIn.user._id || loggedIn.user.id); // Handle both ID formats
+        
+        dispatch(setLogin({ user: userData, token: loggedIn.token }));
         navigate("/");
+      } else {
+        throw new Error("Invalid response from server");
       }
     } catch (err) {
       setError(err.message);
+      localStorage.clear(); // Clear any partial data on error
     } finally {
       setIsLoading(false);
     }
