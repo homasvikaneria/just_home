@@ -1,3 +1,4 @@
+// just_home/Frontend/vite-project/src/redux/store.js
 // Frontend/vite-project/src/redux/store.js
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { userReducer, listingsReducer } from "./state";

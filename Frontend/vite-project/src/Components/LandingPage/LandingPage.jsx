@@ -4,15 +4,11 @@ import { Link  , useNavigate } from "react-router-dom";
 import Mainnavbar from "../Mainnav/Mainnavbar"
 import './LandingPage.css'
 
-
-
-
-
 const LandingPage = () => {
     const navigate = useNavigate();
 
     return (
-        <div>
+        <div className="mainpart">
             <Mainnavbar />
 
             <div className="lp-1">
