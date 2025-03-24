@@ -31,46 +31,74 @@ const Login = () => {
     setError("");
     setIsLoading(true);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      setError("Request timed out. Please try again.");
+      setIsLoading(false);
+    }, 10000); // Reduced to 10 seconds
+
     try {
-      const response = await fetch("https://just-home.onrender.com/users/login", {
+      const response = await fetch("http://localhost:8000/users/login", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
         body: JSON.stringify({ email, password }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Invalid email or password");
+        throw new Error(errorData.message || "Login failed. Please try again.");
       }
 
       const loggedIn = await response.json();
 
       if (loggedIn?.user && loggedIn?.token) {
-        // Store complete user data and token
+        const { _id, id, email, profilePicture, name, role } = loggedIn.user;
         const userData = {
-          ...loggedIn.user,
+          _id: _id || id,
+          email,
+          profilePicture: profilePicture || '/default-avatar.png',
+          name,
+          role,
           isAuthenticated: true,
           lastLogin: new Date().toISOString()
         };
         
-        // Store with proper user ID format
-        localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('token', loggedIn.token);
-        localStorage.setItem('userId', loggedIn.user._id || loggedIn.user.id); // Handle both ID formats
+        // Validate profile picture URL
+        if (userData.profilePicture && !userData.profilePicture.startsWith('http')) {
+          userData.profilePicture = `http://localhost:8000${userData.profilePicture}`;
+        }
+        
+        // Batch localStorage operations
+        const storageData = {
+          user: JSON.stringify(userData),
+          token: loggedIn.token,
+          userId: userData._id
+        };
+        
+        Object.entries(storageData).forEach(([key, value]) => {
+          localStorage.setItem(key, value);
+        });
         
         dispatch(setLogin({ user: userData, token: loggedIn.token }));
-        navigate("/");
-      } else {
-        throw new Error("Invalid response from server");
+        navigate("/", { replace: true });
       }
     } catch (err) {
-      setError(err.message);
-      localStorage.clear(); // Clear any partial data on error
+      if (err.name === 'AbortError') {
+        setError('Connection timed out. Please check your internet connection.');
+      } else {
+        setError(err.message || 'An error occurred during login.');
+      }
+      localStorage.clear();
     } finally {
       setIsLoading(false);
+      clearTimeout(timeoutId);
     }
   };
 
@@ -95,6 +123,12 @@ const Login = () => {
         <Divider className="divider">OR</Divider>
 
         {/* Form */}
+        {error && (
+          <Typography color="error" align="center" style={{ margin: '10px 0' }}>
+            {error}
+          </Typography>
+        )}
+        
         <form onSubmit={handleSubmit}>
           <TextField
             label="Email Address"
