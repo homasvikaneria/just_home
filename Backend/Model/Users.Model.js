@@ -6,13 +6,15 @@ const usersSchema = mongoose.Schema({
     surname: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    profileImagePath: { type: String, default: "" },
-    phoneNumber: { type: String, default: "" },
-    address: { type: String, default: "" },
+    profileImagePath: { type: String, default: "/uploads/default-avatar.png" },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    isActive: { type: Boolean, default: true },
+    lastLogin: { type: Date },
+    phoneNumber: { type: String },
 
-    wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Properties" }],  // ✅ Store references
-    reservationList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reservations" }], 
-    propertyList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Properties" }] 
+    wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Properties" }],
+    reservationList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reservations" }],
+    propertyList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Properties" }]
 }, { timestamps: true });
 
 export const Users = mongoose.model("Users", usersSchema);

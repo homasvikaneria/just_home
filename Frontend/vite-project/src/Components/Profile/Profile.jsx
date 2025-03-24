@@ -64,7 +64,7 @@ const EditProfile = () => {
                 setFormData(prev => ({
                     ...prev,
                     name: userData.name || "",
-                    surname: userData.surname || "",
+                    surname: userData.surname || storedUser.surname || "",
                     email: userData.email || "",
                     phoneNumber: storedUser.phoneNumber || userData.phoneNumber || "",
                     address: storedUser.address || userData.address || "",
@@ -72,8 +72,37 @@ const EditProfile = () => {
                     password: ""
                 }));
 
+                // Update the image handling in useEffect
                 if (userData.profileImagePath) {
-                    setPreviewImage(`https://just-home.onrender.com/uploads/${userData.profileImagePath}`);
+                    const imagePath = userData.profileImagePath.startsWith('http') 
+                        ? userData.profileImagePath 
+                        : `http://localhost:8000/uploads/${userData.profileImagePath}`;
+                    setPreviewImage(imagePath);
+                } else if (storedUser.profilePicture) {
+                    setPreviewImage(storedUser.profilePicture);
+                }
+
+                // ... and update the image rendering in return section:
+                <div className="profile-image-container">
+                    <img 
+                        src={previewImage || "/assets/images/default-profile.jpg"} 
+                        alt="Profile" 
+                        className="profile-image"
+                        onError={(e) => {
+                            const fallbackImage = "/assets/images/default-profile.jpg";
+                            if (e.target.src !== window.location.origin + fallbackImage) {
+                                e.target.src = fallbackImage;
+                            }
+                            e.target.onerror = null;
+                        }}
+                    />
+                </div>
+
+                // ... and in handleSubmit:
+                if (response.data.profileImagePath) {
+                    const updatedImagePath = `http://localhost:8000/uploads/${response.data.profileImagePath}`;
+                    setPreviewImage(updatedImagePath);
+                    updatedUser.profilePicture = updatedImagePath;
                 }
             }
         })
@@ -164,11 +193,10 @@ const EditProfile = () => {
             }
         
             if (response.data) {
-                // Update local storage with new user data
                 const updatedUser = { 
                     ...user, 
                     ...response.data,
-                    // These will now be saved in both backend and localStorage
+                    surname: formData.surname,
                     phoneNumber: formData.phoneNumber || "",
                     address: formData.address || ""
                 };
@@ -195,11 +223,14 @@ const EditProfile = () => {
             <div className="profile-header">
                 <div className="profile-image-container">
                     <img 
-                        src={previewImage || "/default-avatar.png"} 
+                        src={previewImage || "/images/default-avatar.png"} 
                         alt="Profile" 
                         className="profile-image"
                         onError={(e) => {
-                            e.target.src = "/default-avatar.png";
+                            console.log("Loading fallback image");
+                            if (!e.target.src.includes('default-avatar.png')) {
+                                e.target.src = "/images/default-avatar.png";
+                            }
                             e.target.onerror = null;
                         }}
                     />
