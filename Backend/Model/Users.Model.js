@@ -7,6 +7,8 @@ const usersSchema = mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     profileImagePath: { type: String, default: "" },
+    phoneNumber: { type: String, default: "" },
+    address: { type: String, default: "" },
 
     wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Properties" }],  // ✅ Store references
     reservationList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reservations" }], 
