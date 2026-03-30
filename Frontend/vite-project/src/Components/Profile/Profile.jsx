@@ -50,7 +50,7 @@ const EditProfile = () => {
         }
 
         // Update the API URL in useEffect
-        axios.get(`http://localhost:8000/users/email/${user.email}`, {
+        axios.get(`https://just-home.onrender.com/users/email/${user.email}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Accept': 'application/json',
@@ -76,7 +76,7 @@ const EditProfile = () => {
                 if (userData.profileImagePath) {
                     const imagePath = userData.profileImagePath.startsWith('http') 
                         ? userData.profileImagePath 
-                        : `http://localhost:8000/uploads/${userData.profileImagePath}`;
+                        : `https://just-home.onrender.com/uploads/${userData.profileImagePath}`;
                     setPreviewImage(imagePath);
                 } else if (storedUser.profilePicture) {
                     setPreviewImage(storedUser.profilePicture);
@@ -100,7 +100,7 @@ const EditProfile = () => {
 
                 // ... and in handleSubmit:
                 if (response.data.profileImagePath) {
-                    const updatedImagePath = `http://localhost:8000/uploads/${response.data.profileImagePath}`;
+                    const updatedImagePath = `https://just-home.onrender.com/uploads/${response.data.profileImagePath}`;
                     setPreviewImage(updatedImagePath);
                     updatedUser.profilePicture = updatedImagePath;
                 }
@@ -177,7 +177,7 @@ const EditProfile = () => {
         // In handleSubmit function, remove the userData reference
         try {
             const response = await axios.patch(
-                `http://localhost:8000/users/update/${userId}`,
+                `https://just-home.onrender.com/users/update/${userId}`,
                 formDataToSend,
                 {
                     headers: { 
@@ -189,7 +189,7 @@ const EditProfile = () => {
         
             // Update preview image using response data instead
             if (response.data.profileImagePath) {
-                setPreviewImage(`http://localhost:8000/uploads/${response.data.profileImagePath}`);
+                setPreviewImage(`https://just-home.onrender.com/uploads/${response.data.profileImagePath}`);
             }
         
             if (response.data) {

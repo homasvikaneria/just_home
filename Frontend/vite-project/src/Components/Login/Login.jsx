@@ -39,7 +39,7 @@ const Login = () => {
     }, 10000); // Reduced to 10 seconds
 
     try {
-      const response = await fetch("http://localhost:8000/users/login", {
+      const response = await fetch("https://just-home.onrender.com/users/login", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const Login = () => {
         
         // Validate profile picture URL
         if (userData.profilePicture && !userData.profilePicture.startsWith('http')) {
-          userData.profilePicture = `http://localhost:8000${userData.profilePicture}`;
+          userData.profilePicture = `https://just-home.onrender.com${userData.profilePicture}`;
         }
         
         // Batch localStorage operations
