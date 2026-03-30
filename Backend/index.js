@@ -1,3 +1,4 @@
+// Backend/index.js
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -61,6 +62,10 @@ mongoose.connect(MONGO_URI, {
 .catch(err => {
     console.error("❌ MongoDB Atlas connection error:", err);
     process.exit(1); // Stop the server on failure
+});
+
+app.get("/", (req, res) => {
+    return res.json({ message: "server is running" });
 });
 
 // 🟢 Start the server
