@@ -1,3 +1,4 @@
+// just_home/Backend/index.js
 // Backend/index.js
 import express from 'express';
 import mongoose from 'mongoose';
